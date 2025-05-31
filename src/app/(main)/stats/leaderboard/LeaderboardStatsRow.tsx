@@ -1,7 +1,7 @@
 "use client";
 import { CHAIN_CONFIG } from "@/config";
 import { formatNumber } from "@/utils/format";
-import { useInView } from "framer-motion";
+import { useInView } from "motion/react";
 import { useRef } from "react";
 import { Address } from "viem";
 import { TableCell } from "@/components/ui/table";

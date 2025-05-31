@@ -1,6 +1,6 @@
 "use client";
 import DataMetric from "@/components/DataMetric";
-import { useInView } from "framer-motion";
+import { useInView } from "motion/react";
 import { useMemo, useRef } from "react";
 
 interface ByTheNumbersDataProps {

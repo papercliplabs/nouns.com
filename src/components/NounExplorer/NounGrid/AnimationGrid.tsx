@@ -1,5 +1,4 @@
 "use client";
-import { motion, AnimatePresence } from "framer-motion";
 
 interface AnimateGridProps {
   items: { element: React.ReactNode; id: number }[];
@@ -8,9 +7,13 @@ interface AnimateGridProps {
 }
 
 // Animation too slow
-export default function AnimationGird({ items, disableAnimateIn, disableAnimateOut }: AnimateGridProps) {
+export default function AnimationGird({
+  items,
+  disableAnimateIn,
+  disableAnimateOut,
+}: AnimateGridProps) {
   return (
-    <ul className="text-content-secondary grid grow auto-rows-min grid-cols-[repeat(auto-fill,minmax(140px,1fr))] items-stretch justify-stretch gap-6">
+    <ul className="grid grow auto-rows-min grid-cols-[repeat(auto-fill,minmax(140px,1fr))] items-stretch justify-stretch gap-6 text-content-secondary">
       {/* <AnimatePresence mode="popLayout"> */}
       {items.map((item, i) => (
         <li

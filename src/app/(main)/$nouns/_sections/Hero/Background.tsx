@@ -1,6 +1,6 @@
 "use client";
 import { cn } from "@/utils/shadcn";
-import { motion, HTMLMotionProps } from "framer-motion";
+import { motion, HTMLMotionProps } from "motion/react";
 import Image from "next/image";
 
 const BASE_DELAY = 0.2;

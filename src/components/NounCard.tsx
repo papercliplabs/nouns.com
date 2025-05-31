@@ -5,7 +5,7 @@ import { twMerge } from "tailwind-merge";
 import { useMemo, useRef } from "react";
 import { CHAIN_CONFIG } from "@/config";
 import { Tooltip, TooltipContent, TooltipTrigger } from "./ui/tooltip";
-import { useInView } from "framer-motion";
+import { useInView } from "motion/react";
 import { useNounImage } from "@/hooks/useNounImage";
 import Icon from "./ui/Icon";
 import clsx from "clsx";

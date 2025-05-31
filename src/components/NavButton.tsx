@@ -1,15 +1,14 @@
-import Link from "next/link";
 import { Button } from "./ui/button";
 import Image from "next/image";
 import { ArrowRightIcon } from "lucide-react";
-import { motion, AnimatePresence, MotionConfig } from "framer-motion";
+import { motion, AnimatePresence, MotionConfig } from "motion/react";
 import { ComponentProps, ReactNode, useEffect, useState } from "react";
 import { cn } from "@/utils/shadcn";
 
 interface NavButtonProps extends ComponentProps<typeof Button> {
   iconSrc: string;
   children: ReactNode;
-  hoverRef: React.RefObject<HTMLDivElement>;
+  hoverRef: React.RefObject<HTMLDivElement | null>;
 }
 
 export default function NavButton({

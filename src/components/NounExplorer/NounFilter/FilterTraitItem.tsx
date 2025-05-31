@@ -6,7 +6,7 @@ import { FilterItemButton } from "./FilterItemButton";
 import { scrollToNounExplorer } from "@/utils/scroll";
 import Image from "next/image";
 import { buildNounTraitImage } from "@/utils/nounImages/nounImage";
-import { useInView } from "framer-motion";
+import { useInView } from "motion/react";
 import { Skeleton } from "@/components/ui/skeleton";
 
 export interface FilterTraitItemProps {

@@ -8,7 +8,7 @@ import React, {
   ComponentProps,
 } from "react";
 import { Button } from "../ui/button";
-import { motion } from "framer-motion";
+import { motion } from "motion/react";
 import { PanelRight } from "lucide-react";
 import { cn } from "@/utils/shadcn";
 

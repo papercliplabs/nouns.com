@@ -4,7 +4,7 @@ import { NounImageBase } from "@/components/NounImage";
 import { Noun } from "@/data/noun/types";
 import { cn } from "@/utils/shadcn";
 import clsx from "clsx";
-import { HTMLMotionProps, motion } from "framer-motion";
+import { HTMLMotionProps, motion, Variants } from "motion/react";
 import { useEffect, useState } from "react";
 
 const BASE_DELAY = 0.2;
@@ -215,7 +215,7 @@ function FloatingNoun({
     duration: 5 + Math.random() * 4, // Range: 5 to 9
   };
 
-  const variants = {
+  const variants: Variants = {
     hidden: {
       scale: 0,
       opacity: 0,

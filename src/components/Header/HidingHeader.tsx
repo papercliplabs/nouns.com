@@ -1,7 +1,7 @@
 "use client";
 import { useScreenSize } from "@/hooks/useScreenSize";
 import clsx from "clsx";
-import { motion, useMotionValueEvent, useScroll } from "framer-motion";
+import { motion, useMotionValueEvent, useScroll } from "motion/react";
 import { usePathname } from "next/navigation";
 import { ReactNode, useMemo, useRef, useState } from "react";
 
