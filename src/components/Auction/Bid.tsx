@@ -38,7 +38,9 @@ export default function Bid({ nounId, nextMinBid }: BidProps) {
     });
   }, [nextMinBidFormatted]);
 
-  async function onSubmit(formData: FormData) {
+  async function onSubmit(event: React.FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    const formData = new FormData(event.currentTarget);
     const parsedBidAmount = parseEther(formData.get("bidAmount") as string);
     createBid(nounId, parsedBidAmount);
   }
@@ -53,7 +55,7 @@ export default function Bid({ nounId, nextMinBid }: BidProps) {
 
   return (
     <div className="flex w-full flex-col gap-1">
-      <form action={onSubmit} className="flex flex-col gap-2 md:flex-row md:gap-4">
+      <form onSubmit={onSubmit} className="flex flex-col gap-2 md:flex-row md:gap-4">
         <div className="relative h-full w-full md:w-[260px]">
           <Input
             placeholder={`Ξ ${nextMinBidFormatted} or more`}
