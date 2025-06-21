@@ -38,17 +38,17 @@ Populate the `.env` file
 Install dependencies
 
 ```bash
-bun install
+pnpm install
 ```
 
 Start dev server
 
 ```bash
-bun dev
+pnpm dev
 ```
 
 Build for production
 
 ```bash
-bun build
+pnpm build
 ```

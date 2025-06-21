@@ -4,6 +4,12 @@ const nextConfig = {
     config.externals.push("pino-pretty", "lokijs", "encoding");
     config.resolve.fallback = { fs: false };
 
+    // Fix for Coinbase Wallet SDK HeartbeatWorker module syntax issue
+    config.module.rules.push({
+      test: /HeartbeatWorker\.js$/,
+      type: 'javascript/esm',
+    });
+
     return config;
   },
   reactStrictMode: false,
