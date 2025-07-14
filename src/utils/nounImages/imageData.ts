@@ -941,6 +941,10 @@ export const imageData = {
         filename: "accessory-gnars",
         data: "0x0019121b0f016e0100026e0214026e0114",
       },
+      {
+        filename: "accessory-goose",
+        data: "0x0018141c0e0400015201270400015201000552020004520300012701510200"
+      }
     ],
     heads: [
       {
