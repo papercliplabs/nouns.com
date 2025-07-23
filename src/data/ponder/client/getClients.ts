@@ -23,7 +23,7 @@ const CLIENT_INFO: Record<number, { url: string; icon: string } | undefined> = {
     url: "https://nounsagora.com",
     icon: "https://nounsagora.com/favicon.ico",
   },
-  11: { url: "https://nouns.farm", icon: "/client/unknown.svg" },
+  11: { url: "https://nouns95.wtf", icon: "/client/unknown.svg" },
   12: { url: "https://proplaunchpad.com", icon: "/client/unknown.svg" },
   13: { url: "https://www.etherscan.io", icon: "/client/etherscan.png" },
   14: { url: "https://pronouns.gg", icon: "https://pronouns.gg/favicon.ico" },
