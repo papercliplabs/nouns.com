@@ -12,13 +12,13 @@ import { LinkExternal } from "../ui/link";
 import { Tooltip, TooltipContent, TooltipTrigger } from "../ui/tooltip";
 import { useAccount, useBalance } from "wagmi";
 import { CHAIN_CONFIG } from "@/config";
-import { useConnectModal } from "@rainbow-me/rainbowkit";
 import {
   DrawerDialog,
   DrawerDialogContent,
   DrawerDialogContentInner,
   DrawerDialogTitle,
 } from "../ui/DrawerDialog";
+import { useModal } from "connectkit";
 
 interface UserTipDialogProps {
   tip?: bigint;
@@ -41,7 +41,7 @@ export default function UserTipDialog({
     token: CHAIN_CONFIG.addresses.wrappedNativeToken,
   });
 
-  const { openConnectModal } = useConnectModal();
+  const { setOpen: setOpenConnectModal } = useModal();
 
   const insufficientBalance = useMemo(() => {
     if (userBalance != undefined && formattedInputValue != undefined) {
@@ -89,7 +89,7 @@ export default function UserTipDialog({
         ) : (
           <button
             onClick={() =>
-              address != undefined ? setOpen(true) : openConnectModal?.()
+              address != undefined ? setOpen(true) : setOpenConnectModal(true)
             }
             className="flex h-[200px] w-[200px] flex-col items-center justify-center gap-2 rounded-[20px] border-4 border-dashed bg-background-ternary p-8 text-content-secondary hover:brightness-[85%]"
           >

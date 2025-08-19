@@ -96,17 +96,7 @@ export function EndedAuction({
         }}
       />
 
-      {auction.state == "ended-unsettled" &&
-        (CHAIN_CONFIG.chain == mainnet ? (
-          <LinkExternal
-            href="https://fomonouns.wtf/"
-            className="w-full hover:brightness-100"
-          >
-            <Button className="w-full">Help mint the next Noun</Button>
-          </LinkExternal>
-        ) : (
-          <Settle />
-        ))}
+      {auction.state == "ended-unsettled" && <Settle />}
       {auction.state == "ended-settled" && (
         <div className="flex w-full flex-col gap-2 md:flex-row md:gap-4">
           <LinkShallow

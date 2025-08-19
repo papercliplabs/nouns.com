@@ -1,13 +1,11 @@
 "use client";
 import { useCallback, useContext, useEffect, useMemo, useState } from "react";
 import ProgressCircle from "../ProgressCircle";
-import { Dialog, DialogContent } from "../ui/dialogBase";
 import { Button } from "../ui/button";
 import { twMerge } from "tailwind-merge";
 import { useAccount, useBalance, useWalletClient } from "wagmi";
 import { Noun } from "@/data/noun/types";
 import Icon from "../ui/Icon";
-import { DialogTrigger } from "@radix-ui/react-dialog";
 import { getBuyNounOnSecondaryPayload } from "@/data/noun/getBuyNounOnSecondaryPayload";
 import { useQuery } from "@tanstack/react-query";
 import ConvertNounGraphic from "../ConvertNounGraphic";
@@ -15,7 +13,6 @@ import { formatNumber } from "@/utils/format";
 import { formatEther } from "viem";
 import { CHAIN_CONFIG, reservoirClient } from "@/config";
 import { APIError, Execute } from "@reservoir0x/reservoir-sdk";
-import { useConnectModal } from "@rainbow-me/rainbowkit";
 import { useSwitchChainCustom } from "@/hooks/useSwitchChainCustom";
 import LoadingSpinner from "../LoadingSpinner";
 import { TransactionListenerContext } from "@/providers/TransactionListener";
@@ -27,6 +24,7 @@ import {
   DrawerDialogContentInner,
   DrawerDialogTrigger,
 } from "@/components/ui/DrawerDialog";
+import { useModal } from "connectkit";
 
 interface BuyOnSecondaryDialogProps {
   noun: Noun;
@@ -40,7 +38,7 @@ export default function BuyNounOnSecondaryDialog({
   const { address } = useAccount();
   const { data: walletClient } = useWalletClient();
   const { switchChain } = useSwitchChainCustom();
-  const { openConnectModal } = useConnectModal();
+  const { setOpen: setOpenConnectModal } = useModal();
   const [error, setError] = useState<string | undefined>(undefined);
   const [pending, setPending] = useState<boolean>(false);
   const router = useRouter();
@@ -77,7 +75,7 @@ export default function BuyNounOnSecondaryDialog({
 
   const executePurchaseStep = useCallback(async () => {
     if (!address || !walletClient) {
-      openConnectModal?.();
+      setOpenConnectModal(true);
     } else if (noun.secondaryListing) {
       // Call all the time
       const correctChain = await switchChain({
@@ -137,7 +135,7 @@ export default function BuyNounOnSecondaryDialog({
   }, [
     address,
     walletClient,
-    openConnectModal,
+    setOpenConnectModal,
     noun.secondaryListing,
     step,
     addTransaction,
