@@ -2,13 +2,13 @@
 import { useCallback } from "react";
 import { useSwitchChain } from "wagmi";
 import { CHAIN_CONFIG } from "@/config";
-import { useChainModal } from "@rainbow-me/rainbowkit";
+import { useModal } from "connectkit";
 
 export function useSwitchChainCustom(): {
   switchChain: ({ chainId }: { chainId: number }) => Promise<boolean>;
 } {
   const { switchChainAsync } = useSwitchChain();
-  const { openChainModal } = useChainModal();
+  const { openSwitchNetworks} = useModal();
 
   const switchChain = useCallback(
     async ({ chainId }: { chainId: number }) => {
@@ -22,11 +22,11 @@ export function useSwitchChainCustom(): {
       } catch (e) {
         // If that doesn't work open the modal
         console.error("Error switching chains, disconnecting...", e);
-        openChainModal?.();
+        openSwitchNetworks();
         return false;
       }
     },
-    [switchChainAsync, openChainModal]
+    [switchChainAsync, openSwitchNetworks]
   );
 
   return { switchChain };

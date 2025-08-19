@@ -27,7 +27,7 @@ import { CHAIN_CONFIG } from "@/config";
 import { TransactionListenerContext } from "@/providers/TransactionListener";
 import { estimateGas, getGasPrice, simulateCalls } from "viem/actions";
 import { useSwitchChainCustom } from "../useSwitchChainCustom";
-import { useConnectModal } from "@rainbow-me/rainbowkit";
+import { useModal } from "connectkit";
 
 const GAS_BUFFER = 0.35; // Gives buffer on gas estimate to help prevent out of gas error
 
@@ -55,7 +55,7 @@ export function useSendTransaction(): UseSendTransactionReturnType {
   const { address: accountAddress } = useAccount();
   const { addTransaction } = useContext(TransactionListenerContext);
   const { switchChain } = useSwitchChainCustom();
-  const { openConnectModal } = useConnectModal();
+  const { setOpen: setOpenConnectModal } = useModal();
   const { data: balanceData } = useBalance({ address: accountAddress });
 
   const [validationError, setValidationError] =
@@ -87,7 +87,7 @@ export function useSendTransaction(): UseSendTransactionReturnType {
       validationFn?: () => Promise<CustomTransactionValidationError | null>,
     ) => {
       if (!accountAddress || !balanceData) {
-        openConnectModal?.();
+        setOpenConnectModal(true);
       } else {
         // Call all the time
         const correctChain = await switchChain({
@@ -171,7 +171,7 @@ export function useSendTransaction(): UseSendTransactionReturnType {
       accountAddress,
       sendTransactionWagmi,
       setValidationError,
-      openConnectModal,
+      setOpenConnectModal,
       switchChain,
       addTransaction,
       balanceData,

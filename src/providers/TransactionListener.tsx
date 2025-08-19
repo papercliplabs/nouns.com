@@ -5,7 +5,6 @@ import { Hex, TransactionType } from "viem";
 import { waitForTransactionReceipt } from "viem/actions";
 import { ToastContext, ToastType } from "./toast";
 import { LinkExternal } from "@/components/ui/link";
-import { useAddRecentTransaction } from "@rainbow-me/rainbowkit";
 import { trackEvent } from "@/data/analytics/trackEvent";
 
 export interface Transaction {
@@ -35,7 +34,6 @@ export function TransactionListenerProvider({
 }) {
   const [transactions, setTransactions] = useState<Transaction[]>([]);
   const { addToast, removeToast } = useContext(ToastContext);
-  const addRecentTransaction = useAddRecentTransaction();
 
   const addTransaction = useCallback(
     async (
@@ -61,8 +59,6 @@ export function TransactionListenerProvider({
         type: ToastType.Pending,
       });
       trackEvent(`${logging.type}-txn-pending`, { hash: hash.toString() });
-
-      addRecentTransaction({ hash, description: logging.description });
 
       const receipt = await waitForTransactionReceipt(
         CHAIN_CONFIG.publicClient,
@@ -94,7 +90,7 @@ export function TransactionListenerProvider({
 
       trackEvent(`${logging.type}-txn-${status}`, { hash: hash.toString() });
     },
-    [setTransactions, addToast, removeToast, addRecentTransaction],
+    [setTransactions, addToast, removeToast],
   );
 
   return (

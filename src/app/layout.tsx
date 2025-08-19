@@ -8,7 +8,6 @@ import Analytics from "@/components/Analytics";
 import type { Metadata, Viewport } from "next";
 
 import "@paperclip-labs/whisk-sdk/styles.css";
-import "@rainbow-me/rainbowkit/styles.css";
 import "@/theme/globals.css";
 import { WithContext, WebSite } from "schema-dts";
 
