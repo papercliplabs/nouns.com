@@ -91,9 +91,9 @@ const CHAIN_SPECIFIC_CONFIGS: Record<number, ChainSpecificData> = {
     },
     nounsGovernanceUrl: "https://nouns.camp/",
     subgraphUrl: {
-      primary: `https://gateway-arbitrum.network.thegraph.com/api/${process.env.DECENTRALIZED_SUBGRAPH_API_KEY}/deployments/id/Qmdfajyi6PSmc45xWpbZoYdses84SAAze6ZcCxuDAhJFzt`,
-      fallback:
+      primary:
         "https://api.goldsky.com/api/public/project_cldf2o9pqagp43svvbk5u3kmo/subgraphs/nouns/prod/gn",
+      fallback: `https://gateway-arbitrum.network.thegraph.com/api/${process.env.DECENTRALIZED_SUBGRAPH_API_KEY}/deployments/id/Qmdfajyi6PSmc45xWpbZoYdses84SAAze6ZcCxuDAhJFzt`,
     },
     ponderIndexerUrl: process.env.INDEXER_URL!,
     swapForWrappedNativeUrl:
@@ -144,8 +144,8 @@ const CHAIN_SPECIFIC_CONFIGS: Record<number, ChainSpecificData> = {
     },
     nounsGovernanceUrl: "https://sepolia.nouns.camp/",
     subgraphUrl: {
-      primary: `https://gateway-arbitrum.network.thegraph.com/api/${process.env.DECENTRALIZED_SUBGRAPH_API_KEY}/deployments/id/QmZNg1ngfNLpYxVQGCqbxWhqNLsiup3oSGbWpkF8tERVa6`,
-      fallback: `https://api.studio.thegraph.com/query/35078/nouns-sepolia/v1.0.0`,
+      primary: `https://api.studio.thegraph.com/query/35078/nouns-sepolia/v1.0.0`,
+      fallback: `https://gateway-arbitrum.network.thegraph.com/api/${process.env.DECENTRALIZED_SUBGRAPH_API_KEY}/deployments/id/QmZNg1ngfNLpYxVQGCqbxWhqNLsiup3oSGbWpkF8tERVa6`,
     },
     ponderIndexerUrl: process.env.INDEXER_URL!, // mainnet for now, didn't deploy for sepolia yet, don't use for testnet but this satisfies codegen
     swapForWrappedNativeUrl: "",

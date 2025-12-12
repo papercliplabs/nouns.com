@@ -1,5 +1,6 @@
 import { createConfig, fallback, http } from "wagmi";
 import { mainnet } from "wagmi/chains";
+import { createStorage, noopStorage } from "wagmi";
 
 import { getDefaultConfig } from "connectkit";
 import { CHAIN_CONFIG } from "@/config";
@@ -23,5 +24,8 @@ export const wagmiConfig = createConfig(
     appIcon: `${process.env.NEXT_PUBLIC_URL}/app-icon.jpeg`,
 
     ssr: true,
+    storage: createStorage({
+      storage: typeof window !== "undefined" ? window.localStorage : noopStorage,
+    }),
   }),
 );
