@@ -13,7 +13,7 @@ const config: CodegenConfig = {
         "!src/data/ponder/**/*",
         "!src/data/cms/**/*",
       ],
-      schema: `https://gateway-arbitrum.network.thegraph.com/api/${process.env.DECENTRALIZED_SUBGRAPH_API_KEY}/deployments/id/Qmdfajyi6PSmc45xWpbZoYdses84SAAze6ZcCxuDAhJFzt`,
+      schema: `https://api.goldsky.com/api/public/project_cldf2o9pqagp43svvbk5u3kmo/subgraphs/nouns/prod/gn`,
       preset: "client",
       plugins: [],
       config: {
