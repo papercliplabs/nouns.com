@@ -2,6 +2,9 @@
   "name": "nouns.com",
   "version": "0.1.0",
   "private": true,
+  "engines": {
+    "node": ">=20.20.0"
+  },
   "scripts": {
     "codegen": "graphql-codegen && wagmi generate",
     "codegen-watch": "wagmi generate --watch |  graphql-codegen --watch",
