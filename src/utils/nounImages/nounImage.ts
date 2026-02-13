@@ -7,13 +7,21 @@ const { bodies, accessories, heads, glasses } = imageData.images;
 
 export type NounImageType = "full" | NounTraitType;
 
+export interface NounSeed {
+  background: number;
+  body: number;
+  accessory: number;
+  head: number;
+  glasses: number;
+}
+
 export function buildBase64Image(
   parts: {
     data: string;
   }[],
   bgColor?: string,
   cropViewBox?: string,
-) {
+): string {
   let svg = buildSVG(parts, palette, bgColor);
 
   if (cropViewBox) {
@@ -25,21 +33,17 @@ export function buildBase64Image(
   return "data:image/svg+xml;base64," + svgBase64;
 }
 
-export function getNounData(seed: {
-  background: number;
-  body: number;
-  accessory: number;
-  head: number;
-  glasses: number;
-}) {
+const PLACEHOLDER_PART = { filename: "unknown", data: "0x0" };
+
+export function getNounData(seed: NounSeed) {
   return {
     parts: [
-      bodies[seed.body],
-      accessories[seed.accessory],
-      heads[seed.head],
-      glasses[seed.glasses],
+      bodies[seed.body] ?? PLACEHOLDER_PART,
+      accessories[seed.accessory] ?? PLACEHOLDER_PART,
+      heads[seed.head] ?? PLACEHOLDER_PART,
+      glasses[seed.glasses] ?? PLACEHOLDER_PART,
     ],
-    background: bgcolors[seed.background],
+    background: bgcolors[seed.background] ?? bgcolors[0],
   };
 }
 
@@ -89,25 +93,25 @@ export function buildNounTraitImage(
   seed: number,
 ): string {
   const data = getPartData(traitType, seed);
-  let viewBox = TRAIT_TYPE_VIEW_BOX[traitType];
+  const viewBox = TRAIT_TYPE_VIEW_BOX[traitType];
 
   return buildBase64Image(
     [{ data }],
-    traitType == "background" ? bgcolors[seed] : undefined,
+    traitType === "background" ? bgcolors[seed] : undefined,
     viewBox,
   );
 }
 
-function getPartData(traitType: NounTraitType, seed: number) {
+function getPartData(traitType: NounTraitType, seed: number): string {
   switch (traitType) {
     case "head":
-      return heads[seed].data;
+      return heads[seed]?.data ?? PLACEHOLDER_PART.data;
     case "glasses":
-      return glasses[seed].data;
+      return glasses[seed]?.data ?? PLACEHOLDER_PART.data;
     case "body":
-      return bodies[seed].data;
+      return bodies[seed]?.data ?? PLACEHOLDER_PART.data;
     case "accessory":
-      return accessories[seed].data;
+      return accessories[seed]?.data ?? PLACEHOLDER_PART.data;
     case "background":
       return ""; // TODO
   }

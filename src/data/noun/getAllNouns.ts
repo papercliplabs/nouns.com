@@ -1,108 +1,125 @@
 "use server";
 import { CHAIN_CONFIG } from "@/config";
-import { graphql } from "../generated/gql";
-import { graphQLFetchWithFallback } from "../utils/graphQLFetch";
-import { Noun } from "./types";
-import { AllNounsQuery } from "../generated/gql/graphql";
+import { Noun, SecondaryNounListing } from "./types";
 import { revalidateTag, unstable_cache } from "next/cache";
-import { transformQueryNounToNoun } from "./helpers";
+import { transformOnChainNounToNoun } from "./helpers";
 import { getSecondaryNounListings } from "./getSecondaryNounListings";
+import { nounsTokenAbi } from "@/abis/nounsToken";
+import { readContract, multicall } from "viem/actions";
+import { getAddress } from "viem";
+import { parseSeedTuple } from "./seedUtils";
 
-const BATCH_SIZE = 1000;
+const MULTICALL_BATCH_SIZE = 200;
 
-const query = graphql(/* GraphQL */ `
-  query AllNouns($batchSize: Int!, $skip: Int!) {
-    nouns(first: $batchSize, skip: $skip) {
-      id
-      owner {
-        id
+async function fetchAllNounsOnChainUncached(): Promise<
+  Omit<Noun, "secondaryListing">[]
+> {
+  const totalSupply = await readContract(CHAIN_CONFIG.publicClient, {
+    address: CHAIN_CONFIG.addresses.nounsToken,
+    abi: nounsTokenAbi,
+    functionName: "totalSupply",
+  });
+
+  const total = Number(totalSupply);
+  const nouns: Omit<Noun, "secondaryListing">[] = [];
+
+  for (let i = 0; i < total; i += MULTICALL_BATCH_SIZE) {
+    const batchSize = Math.min(MULTICALL_BATCH_SIZE, total - i);
+    const contracts = [];
+
+    for (let j = 0; j < batchSize; j++) {
+      const tokenId = BigInt(i + j);
+      contracts.push({
+        address: CHAIN_CONFIG.addresses.nounsToken,
+        abi: nounsTokenAbi,
+        functionName: "ownerOf" as const,
+        args: [tokenId] as const,
+      });
+      contracts.push({
+        address: CHAIN_CONFIG.addresses.nounsToken,
+        abi: nounsTokenAbi,
+        functionName: "seeds" as const,
+        args: [tokenId] as const,
+      });
+    }
+
+    const results = await multicall(CHAIN_CONFIG.publicClient, {
+      contracts,
+      allowFailure: true,
+    });
+
+    for (let j = 0; j < batchSize; j++) {
+      const ownerResult = results[j * 2];
+      const seedResult = results[j * 2 + 1];
+
+      if (
+        ownerResult.status !== "success" ||
+        seedResult.status !== "success"
+      ) {
+        continue;
       }
-      seed {
-        background
-        body
-        accessory
-        head
-        glasses
-      }
+
+      const owner = ownerResult.result as string;
+      const seed = seedResult.result as readonly [
+        number,
+        number,
+        number,
+        number,
+        number,
+      ];
+
+      nouns.push(
+        transformOnChainNounToNoun(
+          (i + j).toString(),
+          getAddress(owner),
+          parseSeedTuple(seed),
+        ),
+      );
     }
   }
-`);
 
-async function runPaginatedNounsQueryUncached() {
-  let queryNouns: AllNounsQuery["nouns"] = [];
-  let skip = 0;
-
-  while (true) {
-    const response = await graphQLFetchWithFallback(
-      CHAIN_CONFIG.subgraphUrl,
-      query,
-      { batchSize: BATCH_SIZE, skip },
-      { next: { revalidate: 0 } },
-    );
-    const responseNouns = response?.nouns;
-    if (!responseNouns) {
-      break;
-    }
-
-    queryNouns = queryNouns.concat(responseNouns);
-
-    if (responseNouns.length == BATCH_SIZE) {
-      skip += BATCH_SIZE;
-    } else {
-      break;
-    }
-  }
-
-  return queryNouns;
+  return nouns;
 }
 
-const runPaginatedNounsQuery = unstable_cache(
-  runPaginatedNounsQueryUncached,
-  ["run-paginated-nouns-query", CHAIN_CONFIG.chain.id.toString()],
+const fetchAllNounsOnChain = unstable_cache(
+  fetchAllNounsOnChainUncached,
+  ["fetch-all-nouns-onchain", CHAIN_CONFIG.chain.id.toString()],
   {
     revalidate: 5 * 60, // 5min
     tags: [`paginated-nouns-query-${CHAIN_CONFIG.chain.id.toString()}`],
   },
 );
 
+function sortDescendingById(nouns: Omit<Noun, "secondaryListing">[]): Omit<Noun, "secondaryListing">[] {
+  return [...nouns].sort((a, b) => (BigInt(b.id) > BigInt(a.id) ? 1 : -1));
+}
+
+function mergeWithListings(
+  nouns: Omit<Noun, "secondaryListing">[],
+  listings: SecondaryNounListing[],
+): Noun[] {
+  return nouns.map((noun) => ({
+    ...noun,
+    secondaryListing: listings.find((listing) => listing.nounId === noun.id) ?? null,
+  }));
+}
+
 export async function getAllNounsUncached(): Promise<Noun[]> {
-  const [queryResponse, secondaryNounListings] = await Promise.all([
-    runPaginatedNounsQueryUncached(),
+  const [onChainNouns, secondaryNounListings] = await Promise.all([
+    fetchAllNounsOnChainUncached(),
     getSecondaryNounListings(),
   ]);
-  let nouns = queryResponse.map(transformQueryNounToNoun);
 
-  // Sort by id, descending
-  nouns.sort((a, b) => (BigInt(b.id) > BigInt(a.id) ? 1 : -1));
-
-  const fullNouns = nouns.map((noun) => ({
-    ...noun,
-    secondaryListing: secondaryNounListings.find(
-      (listing) => listing.nounId === noun.id,
-    ),
-  })) as Noun[];
-
-  return fullNouns;
+  return mergeWithListings(sortDescendingById(onChainNouns), secondaryNounListings);
 }
 
 export async function getAllNouns(): Promise<Noun[]> {
-  const [queryResponse, secondaryNounListings] = await Promise.all([
-    runPaginatedNounsQuery(),
+  const [onChainNouns, secondaryNounListings] = await Promise.all([
+    fetchAllNounsOnChain(),
     getSecondaryNounListings(),
   ]);
-  let nouns = queryResponse.map(transformQueryNounToNoun);
 
-  // Sort by id, descending
-  nouns.sort((a, b) => (BigInt(b.id) > BigInt(a.id) ? 1 : -1));
-
-  const fullNouns = nouns.map((noun) => ({
-    ...noun,
-    secondaryListing: secondaryNounListings.find(
-      (listing) => listing.nounId === noun.id,
-    ),
-  })) as Noun[];
-
-  return fullNouns;
+  return mergeWithListings(sortDescendingById(onChainNouns), secondaryNounListings);
 }
 
 export async function forceAllNounRevalidation() {

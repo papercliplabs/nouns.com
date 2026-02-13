@@ -26,6 +26,7 @@ export function FloatingNounsBackground({
   const [randomNouns, setRandomNouns] = useState<Noun[]>([]);
 
   useEffect(() => {
+    if (nouns.length === 0) return;
     // Generate the random nouns once on the client
     setRandomNouns(
       Array.from(

@@ -1,5 +1,4 @@
 import { GraphQLError } from "graphql";
-import { TypedDocumentString as SubgraphTypedDocumentString } from "../generated/gql/graphql";
 import { TypedDocumentString as PonderTypedDocumentString } from "../generated/ponder/graphql";
 import { TypedDocumentString as CmsTypedDocumentString } from "../generated/cms/graphql";
 import { safeFetch } from "@/utils/safeFetch";
@@ -14,7 +13,6 @@ export interface CacheConfig {
 export async function graphQLFetch<Result, Variables>(
   url: string,
   query:
-    | SubgraphTypedDocumentString<Result, Variables>
     | PonderTypedDocumentString<Result, Variables>
     | CmsTypedDocumentString<Result, Variables>,
   variables?: Variables,
@@ -46,22 +44,4 @@ export async function graphQLFetch<Result, Variables>(
   }
 
   return result.data;
-}
-
-export async function graphQLFetchWithFallback<Result, Variables>(
-  url: { primary: string; fallback: string },
-  query:
-    | SubgraphTypedDocumentString<Result, Variables>
-    | PonderTypedDocumentString<Result, Variables>,
-  variables?: Variables,
-  cacheConfig?: CacheConfig,
-): Promise<Result | null> {
-  let result = await graphQLFetch(url.primary, query, variables, cacheConfig);
-
-  if (!result) {
-    console.log("Graphql primary failed, trying fallback...");
-    result = await graphQLFetch(url.fallback, query, variables, cacheConfig);
-  }
-
-  return result;
 }

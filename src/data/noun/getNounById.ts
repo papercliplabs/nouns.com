@@ -1,55 +1,77 @@
 "use server";
-import { Noun } from "./types";
-import { checkForAllNounRevalidation, forceAllNounRevalidation, getAllNouns } from "./getAllNouns";
-import { graphql } from "../generated/gql";
-import { graphQLFetchWithFallback } from "../utils/graphQLFetch";
-import { CHAIN_CONFIG } from "@/config";
-import { transformQueryNounToNoun } from "./helpers";
+import { getAddress } from "viem";
+import { readContract } from "viem/actions";
 import { unstable_cache } from "next/cache";
+import { nounsTokenAbi } from "@/abis/nounsToken";
+import { CHAIN_CONFIG } from "@/config";
 import { SECONDS_PER_HOUR } from "@/utils/constants";
+import { checkForAllNounRevalidation } from "./getAllNouns";
 import { getSecondaryListingForNoun } from "./getSecondaryNounListings";
+import { transformOnChainNounToNoun } from "./helpers";
+import { parseSeedTuple } from "./seedUtils";
+import { Noun } from "./types";
 
-const query = graphql(/* GraphQL */ `
-  query NounById($id: ID!) {
-    noun(id: $id) {
-      id
-      owner {
-        id
-      }
-      seed {
-        background
-        body
-        accessory
-        head
-        glasses
-      }
-    }
-  }
-`);
+async function fetchNounOnChain(
+  id: string,
+): Promise<Omit<Noun, "secondaryListing"> | undefined> {
+  try {
+    const [owner, seed] = await Promise.all([
+      readContract(CHAIN_CONFIG.publicClient, {
+        address: CHAIN_CONFIG.addresses.nounsToken,
+        abi: nounsTokenAbi,
+        functionName: "ownerOf",
+        args: [BigInt(id)],
+      }),
+      readContract(CHAIN_CONFIG.publicClient, {
+        address: CHAIN_CONFIG.addresses.nounsToken,
+        abi: nounsTokenAbi,
+        functionName: "seeds",
+        args: [BigInt(id)],
+      }),
+    ]);
 
-export async function getNounByIdUncached(id: string): Promise<Noun | undefined> {
-  const [response, secondaryListing] = await Promise.all([
-    graphQLFetchWithFallback(CHAIN_CONFIG.subgraphUrl, query, { id }, { next: { revalidate: 0 } }),
-    getSecondaryListingForNoun(id),
-  ]);
-  const noun = response ? transformQueryNounToNoun(response.noun as any) : undefined;
-
-  if (noun) {
-    checkForAllNounRevalidation(id);
-    const fullNoun: Noun = { ...noun, secondaryListing };
-    return fullNoun;
-  } else {
+    return transformOnChainNounToNoun(
+      id,
+      getAddress(owner),
+      parseSeedTuple(seed),
+    );
+  } catch (e) {
+    console.error("fetchNounOnChain - failed for id", id, e);
     return undefined;
   }
 }
 
-const getNounByIdCached = unstable_cache(getNounByIdUncached, ["get-noun-by-id"], { revalidate: SECONDS_PER_HOUR });
+// On-chain data (owner + seed) is cached for 1 hour. Seeds are immutable,
+// owner changes infrequently. Secondary listings are always fetched fresh.
+const fetchNounOnChainCached = unstable_cache(
+  fetchNounOnChain,
+  ["get-noun-by-id"],
+  { revalidate: SECONDS_PER_HOUR },
+);
 
-export async function getNounById(id: string): Promise<Noun | undefined> {
-  const [noun, secondaryListing] = await Promise.all([getNounByIdCached(id), getSecondaryListingForNoun(id)]);
+async function withSecondaryListing(
+  id: string,
+  onChainFetch: (id: string) => Promise<Omit<Noun, "secondaryListing"> | undefined>,
+): Promise<Noun | undefined> {
+  const [noun, secondaryListing] = await Promise.all([
+    onChainFetch(id),
+    getSecondaryListingForNoun(id),
+  ]);
 
-  // Kickoff a check to revalidate all in grid (when its a new Noun)
+  if (!noun) return undefined;
+
   checkForAllNounRevalidation(id);
+  return { ...noun, secondaryListing };
+}
 
-  return noun;
+export async function getNounByIdUncached(
+  id: string,
+): Promise<Noun | undefined> {
+  return withSecondaryListing(id, fetchNounOnChain);
+}
+
+export async function getNounById(
+  id: string,
+): Promise<Noun | undefined> {
+  return withSecondaryListing(id, fetchNounOnChainCached);
 }

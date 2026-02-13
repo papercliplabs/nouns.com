@@ -1,6 +1,4 @@
 "use server";
-import { graphql } from "../generated/gql";
-import { graphQLFetchWithFallback } from "../utils/graphQLFetch";
 import { CHAIN_CONFIG } from "@/config";
 import { BigIntString } from "@/utils/types";
 import { Auction, Bid } from "./types";
@@ -8,32 +6,51 @@ import { Hex, getAddress } from "viem";
 import { getProtocolParams } from "../protocol/getProtocolParams";
 import { bigIntMax } from "@/utils/bigint";
 import { revalidateTag, unstable_cache } from "next/cache";
+import { graphQLFetch } from "../utils/graphQLFetch";
+import { TypedDocumentString } from "../generated/ponder/graphql";
 
 const NOUNDER_AUCTION_CUTOFF = BigInt(1820);
 
-const query = graphql(/* GraphQL */ `
-  query Auction($id: ID!) {
-    auction(id: $id) {
-      id
-      noun {
-        id
-      }
-      amount
-      startTime
-      endTime
-      bidder {
-        id
-      }
-      clientId
+interface PonderAuctionResult {
+  auction: {
+    nounsNftId: string;
+    startTimestamp: number;
+    endTimestamp: number;
+    settled: boolean;
+    bids: {
+      items: Array<{
+        transactionHash: string;
+        bidderAccountAddress: string;
+        amount: string;
+        timestamp: number;
+        clientId: number | null;
+      }>;
+    };
+  } | null;
+}
+
+interface PonderAuctionVariables {
+  nounId: string;
+}
+
+const ponderAuctionQuery = new TypedDocumentString<
+  PonderAuctionResult,
+  PonderAuctionVariables
+>(`
+  query AuctionById($nounId: BigInt!) {
+    auction(nounsNftId: $nounId) {
+      nounsNftId
+      startTimestamp
+      endTimestamp
       settled
-      bids {
-        txHash
-        bidder {
-          id
+      bids(limit: 1000, orderBy: "amount", orderDirection: "desc") {
+        items {
+          transactionHash
+          bidderAccountAddress
+          amount
+          timestamp
+          clientId
         }
-        amount
-        blockTimestamp
-        clientId
       }
     }
   }
@@ -42,12 +59,9 @@ const query = graphql(/* GraphQL */ `
 async function getAuctionByIdUncached(
   id: BigIntString,
 ): Promise<Auction | undefined> {
-  if (
-    BigInt(id) <= NOUNDER_AUCTION_CUTOFF &&
-    BigInt(id) % BigInt(10) == BigInt(0)
-  ) {
+  if (BigInt(id) <= NOUNDER_AUCTION_CUTOFF && BigInt(id) % 10n === 0n) {
     const nextNoun = await getAuctionByIdUncached(
-      (BigInt(id) + BigInt(1)).toString(),
+      (BigInt(id) + 1n).toString(),
     );
     return {
       nounId: id,
@@ -66,11 +80,11 @@ async function getAuctionByIdUncached(
   }
 
   const [result, params] = await Promise.all([
-    graphQLFetchWithFallback(
-      CHAIN_CONFIG.subgraphUrl,
-      query,
-      { id },
-      { next: { revalidate: 0 } },
+    graphQLFetch(
+      CHAIN_CONFIG.ponderIndexerUrl,
+      ponderAuctionQuery,
+      { nounId: id },
+      { cache: "no-cache" },
     ),
     getProtocolParams(),
   ]);
@@ -81,11 +95,11 @@ async function getAuctionByIdUncached(
     return undefined;
   }
 
-  const bids: Bid[] = auction.bids.map((bid: any) => ({
-    transactionHash: bid.txHash as Hex,
-    bidderAddress: getAddress(bid.bidder.id),
+  const bids: Bid[] = auction.bids.items.map((bid) => ({
+    transactionHash: bid.transactionHash as Hex,
+    bidderAddress: getAddress(bid.bidderAccountAddress),
     amount: bid.amount,
-    timestamp: bid.blockTimestamp,
+    timestamp: bid.timestamp.toString(),
     clientId: bid.clientId ?? undefined,
   }));
 
@@ -93,35 +107,34 @@ async function getAuctionByIdUncached(
   bids.sort((a, b) => (BigInt(b.amount) > BigInt(a.amount) ? 1 : -1));
 
   const highestBidAmount =
-    auction.bids.length > 0 ? BigInt(bids[0].amount) : BigInt(0);
+    bids.length > 0 ? BigInt(bids[0].amount) : 0n;
   const nextMinBid = bigIntMax(
     BigInt(params.reservePrice),
     highestBidAmount +
-      (highestBidAmount * BigInt(params.minBidIncrementPercentage)) /
-        BigInt(100),
+      (highestBidAmount * BigInt(params.minBidIncrementPercentage)) / 100n,
   );
 
   const nowS = Date.now() / 1000;
-  const ended = nowS > Number(auction.endTime);
+  const ended = nowS > Number(auction.endTimestamp);
+
+  let state: Auction["state"];
+  if (!ended) {
+    state = "live";
+  } else if (auction.settled) {
+    state = "ended-settled";
+  } else {
+    state = "ended-unsettled";
+  }
 
   return {
-    nounId: auction.noun.id,
-
-    startTime: auction.startTime,
-    endTime: auction.endTime,
-
+    nounId: auction.nounsNftId,
+    startTime: auction.startTimestamp.toString(),
+    endTime: auction.endTimestamp.toString(),
     nextMinBid: nextMinBid.toString(),
-
-    state: ended
-      ? auction.settled
-        ? "ended-settled"
-        : "ended-unsettled"
-      : "live",
-
+    state,
     bids,
-
     nounderAuction: false,
-  } as Auction;
+  };
 }
 
 const getAuctionByIdCached = unstable_cache(
@@ -132,10 +145,10 @@ const getAuctionByIdCached = unstable_cache(
   },
 );
 
-export async function getAuctionById(id: BigIntString) {
+export async function getAuctionById(id: BigIntString): Promise<Auction | undefined> {
   const cachedAuction = await getAuctionByIdCached(id);
 
-  if (cachedAuction?.state != "ended-settled") {
+  if (cachedAuction?.state !== "ended-settled") {
     revalidateTag("get-auction-by-id");
     return await getAuctionByIdCached(id);
   }

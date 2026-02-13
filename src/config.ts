@@ -28,7 +28,7 @@ export interface ChainSpecificData {
     nounsToken: Address;
     nounsTreasury: Address; // a.k.a NounsDAOExecutor, which is the treasury time lock
     nounsDoaProxy: Address; // GovernorBravoDelegator, proxy to logic contract
-    nounsDoaDataProxy: Address; // proxy to NounsDAOData.sol contract, which
+    nounsDoaDataProxy: Address; // proxy to NounsDAOData.sol contract
     nounsAuctionHouseProxy: Address;
     nounsErc20: Address;
     wrappedNativeToken: Address;
@@ -47,25 +47,35 @@ export interface ChainSpecificData {
   reservoirApiUrl: string;
 }
 
-export const mainnetPublicClient = createClient({
-  chain: mainnet,
-  transport: fallback([
-    http(
-      `https://eth-mainnet.g.alchemy.com/v2/${process.env.NEXT_PUBLIC_ALCHEMY_API_KEY!}`,
-    ),
-    http(
-      `https://mainnet.infura.io/v3/${process.env.NEXT_PUBLIC_INFURA_API_KEY!}`,
-    ),
-  ]),
-});
+function createPublicClient(chain: Chain, rpcUrl: { primary: string; fallback: string }): Client {
+  return createClient({
+    chain,
+    transport: fallback([
+      http(rpcUrl.primary, { batch: true }),
+      http(rpcUrl.fallback, { batch: true }),
+    ]),
+    batch: {
+      multicall: true,
+    },
+  });
+}
+
+const MAINNET_RPC_URL = {
+  primary: `https://eth-mainnet.g.alchemy.com/v2/${process.env.NEXT_PUBLIC_ALCHEMY_API_KEY!}`,
+  fallback: `https://mainnet.infura.io/v3/${process.env.NEXT_PUBLIC_INFURA_API_KEY!}`,
+};
+
+export const mainnetPublicClient = createPublicClient(mainnet, MAINNET_RPC_URL);
+
+const SEPOLIA_RPC_URL = {
+  primary: `https://eth-sepolia.g.alchemy.com/v2/${process.env.NEXT_PUBLIC_ALCHEMY_API_KEY!}`,
+  fallback: `https://sepolia.infura.io/v3/${process.env.NEXT_PUBLIC_INFURA_API_KEY!}`,
+};
 
 const CHAIN_SPECIFIC_CONFIGS: Record<number, ChainSpecificData> = {
   [mainnet.id]: {
     chain: mainnet,
-    rpcUrl: {
-      primary: `https://eth-mainnet.g.alchemy.com/v2/${process.env.NEXT_PUBLIC_ALCHEMY_API_KEY!}`,
-      fallback: `https://mainnet.infura.io/v3/${process.env.NEXT_PUBLIC_INFURA_API_KEY!}`,
-    },
+    rpcUrl: MAINNET_RPC_URL,
     publicClient: mainnetPublicClient,
     reservoirChain: { ...reservoirChains.mainnet, active: true },
     addresses: {
@@ -102,21 +112,8 @@ const CHAIN_SPECIFIC_CONFIGS: Record<number, ChainSpecificData> = {
   },
   [sepolia.id]: {
     chain: sepolia,
-    rpcUrl: {
-      primary: `https://eth-sepolia.g.alchemy.com/v2/${process.env.NEXT_PUBLIC_ALCHEMY_API_KEY!}`,
-      fallback: `https://sepolia.infura.io/v3/${process.env.NEXT_PUBLIC_INFURA_API_KEY!}`,
-    },
-    publicClient: createClient({
-      chain: sepolia,
-      transport: fallback([
-        http(
-          `https://eth-sepolia.g.alchemy.com/v2/${process.env.NEXT_PUBLIC_ALCHEMY_API_KEY!}`,
-        ),
-        http(
-          `https://sepolia.infura.io/v3/${process.env.NEXT_PUBLIC_INFURA_API_KEY!}`,
-        ),
-      ]),
-    }),
+    rpcUrl: SEPOLIA_RPC_URL,
+    publicClient: createPublicClient(sepolia, SEPOLIA_RPC_URL),
     reservoirChain: {
       ...reservoirChains.sepolia,
       active: true,
