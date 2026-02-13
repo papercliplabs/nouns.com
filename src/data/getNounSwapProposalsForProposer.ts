@@ -3,57 +3,9 @@ import { ProposalState, SwapNounProposal } from "../utils/types";
 import { Address } from "viem";
 import { getNounById } from "./noun/getNounById";
 import { CHAIN_CONFIG } from "../config";
-import { graphQLFetch } from "./utils/graphQLFetch";
-import { TypedDocumentString, LastKnownProposalState } from "./generated/ponder/graphql";
+import { LastKnownProposalState } from "./generated/ponder/graphql";
 import { getBlockNumber } from "viem/actions";
-
-interface PonderProposalsResult {
-  proposals: {
-    items: Array<{
-      id: number;
-      title: string;
-      description: string;
-      proposerAddress: string;
-      quorumVotes: number;
-      forVotes: number;
-      againstVotes: number;
-      lastKnownState: LastKnownProposalState;
-      votingStartBlock: number;
-      votingEndBlock: number;
-    }>;
-  };
-}
-
-interface PonderProposalsVariables {
-  proposer: string;
-}
-
-const ponderProposalsQuery = new TypedDocumentString<
-  PonderProposalsResult,
-  PonderProposalsVariables
->(`
-  query NounSwapProposals($proposer: String!) {
-    proposals(
-      limit: 1000
-      where: { proposerAddress: $proposer, title_contains: "NounSwap" }
-      orderBy: "id"
-      orderDirection: "desc"
-    ) {
-      items {
-        id
-        title
-        description
-        proposerAddress
-        quorumVotes
-        forVotes
-        againstVotes
-        lastKnownState
-        votingStartBlock
-        votingEndBlock
-      }
-    }
-  }
-`);
+import { fetchNounSwapProposals } from "./ponder/governance/getNounSwapProposals";
 
 // Title format patterns for NounSwap proposals:
 //   "NounSwap v1: Swap Noun X + Y WETH for Noun Z"
@@ -111,12 +63,7 @@ export async function getNounSwapProposalsForProposer(address: Address): Promise
   const proposer = address.toString().toLowerCase();
   const currentBlock = await getBlockNumber(CHAIN_CONFIG.publicClient);
 
-  const queryResult = await graphQLFetch(
-    CHAIN_CONFIG.ponderIndexerUrl,
-    ponderProposalsQuery,
-    { proposer },
-    { cache: "no-cache" },
-  );
+  const queryResult = await fetchNounSwapProposals(proposer);
 
   if (!queryResult) {
     console.log(`getNounSwapProposalsForProposer: no proposals found - ${address}`);

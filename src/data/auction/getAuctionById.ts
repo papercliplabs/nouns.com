@@ -6,55 +6,9 @@ import { Hex, getAddress } from "viem";
 import { getProtocolParams } from "../protocol/getProtocolParams";
 import { bigIntMax } from "@/utils/bigint";
 import { revalidateTag, unstable_cache } from "next/cache";
-import { graphQLFetch } from "../utils/graphQLFetch";
-import { TypedDocumentString } from "../generated/ponder/graphql";
+import { fetchAuctionByNounId } from "../ponder/auction/getAuctionByNounId";
 
 const NOUNDER_AUCTION_CUTOFF = BigInt(1820);
-
-interface PonderAuctionResult {
-  auction: {
-    nounsNftId: string;
-    startTimestamp: number;
-    endTimestamp: number;
-    settled: boolean;
-    bids: {
-      items: Array<{
-        transactionHash: string;
-        bidderAccountAddress: string;
-        amount: string;
-        timestamp: number;
-        clientId: number | null;
-      }>;
-    };
-  } | null;
-}
-
-interface PonderAuctionVariables {
-  nounId: string;
-}
-
-const ponderAuctionQuery = new TypedDocumentString<
-  PonderAuctionResult,
-  PonderAuctionVariables
->(`
-  query AuctionById($nounId: BigInt!) {
-    auction(nounsNftId: $nounId) {
-      nounsNftId
-      startTimestamp
-      endTimestamp
-      settled
-      bids(limit: 1000, orderBy: "amount", orderDirection: "desc") {
-        items {
-          transactionHash
-          bidderAccountAddress
-          amount
-          timestamp
-          clientId
-        }
-      }
-    }
-  }
-`);
 
 async function getAuctionByIdUncached(
   id: BigIntString,
@@ -80,12 +34,7 @@ async function getAuctionByIdUncached(
   }
 
   const [result, params] = await Promise.all([
-    graphQLFetch(
-      CHAIN_CONFIG.ponderIndexerUrl,
-      ponderAuctionQuery,
-      { nounId: id },
-      { cache: "no-cache" },
-    ),
+    fetchAuctionByNounId(id),
     getProtocolParams(),
   ]);
 
@@ -95,7 +44,7 @@ async function getAuctionByIdUncached(
     return undefined;
   }
 
-  const bids: Bid[] = auction.bids.items.map((bid) => ({
+  const bids: Bid[] = (auction.bids?.items ?? []).map((bid) => ({
     transactionHash: bid.transactionHash as Hex,
     bidderAddress: getAddress(bid.bidderAccountAddress),
     amount: bid.amount,
