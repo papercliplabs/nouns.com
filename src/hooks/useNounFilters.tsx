@@ -1,5 +1,4 @@
 "use client";
-import { BUY_NOW_FILTER_KEY } from "@/components/NounExplorer/NounFilter/BuyNowFilter";
 import { INSTANT_SWAP_FILTER_KEY } from "@/components/NounExplorer/NounFilter/InstantSwapFilter";
 import { ONLY_TREASURY_NOUNS_FILTER_KEY } from "@/components/NounExplorer/NounFilter/TreasuryNounFilter";
 import { useSearchParams } from "next/navigation";
@@ -13,7 +12,6 @@ interface NounFilters {
   accessory: string[];
   heldByTreasury: boolean;
   heldByNounsErc20: boolean;
-  buyNow: boolean;
   totalCount: number;
 }
 
@@ -28,7 +26,6 @@ export function useNounFilters(): NounFilters {
     const accessory = searchParams.getAll("accessory[]");
     const heldByTreasury = searchParams.get(ONLY_TREASURY_NOUNS_FILTER_KEY) != null;
     const heldByNounsErc20 = searchParams.get(INSTANT_SWAP_FILTER_KEY) != null;
-    const buyNow = searchParams.get(BUY_NOW_FILTER_KEY) != null;
 
     const totalCount =
       background.length +
@@ -37,8 +34,7 @@ export function useNounFilters(): NounFilters {
       body.length +
       accessory.length +
       (heldByTreasury ? 1 : 0) +
-      (heldByNounsErc20 ? 1 : 0) +
-      (buyNow ? 1 : 0);
+      (heldByNounsErc20 ? 1 : 0);
 
     return {
       background,
@@ -48,7 +44,6 @@ export function useNounFilters(): NounFilters {
       accessory,
       heldByTreasury,
       heldByNounsErc20,
-      buyNow,
       totalCount,
     };
   }, [searchParams]);

@@ -8,18 +8,12 @@ import {
 } from "viem";
 import { mainnet, Chain, sepolia } from "viem/chains";
 import dotenv from "dotenv";
-import {
-  reservoirChains,
-  createClient as createReservoirClient,
-  ReservoirChain,
-} from "@reservoir0x/reservoir-sdk";
 
 dotenv.config();
 
 export interface ChainSpecificData {
   chain: Chain;
   publicClient: Client;
-  reservoirChain: ReservoirChain;
   rpcUrl: {
     primary: string;
     fallback: string;
@@ -44,7 +38,6 @@ export interface ChainSpecificData {
   };
   ponderIndexerUrl: string;
   swapForWrappedNativeUrl: string;
-  reservoirApiUrl: string;
 }
 
 export const mainnetPublicClient = createClient({
@@ -67,7 +60,6 @@ const CHAIN_SPECIFIC_CONFIGS: Record<number, ChainSpecificData> = {
       fallback: `https://mainnet.infura.io/v3/${process.env.NEXT_PUBLIC_INFURA_API_KEY!}`,
     },
     publicClient: mainnetPublicClient,
-    reservoirChain: { ...reservoirChains.mainnet, active: true },
     addresses: {
       nounsToken: getAddress("0x9C8fF314C9Bc7F6e59A9d9225Fb22946427eDC03"),
       nounsTreasury: getAddress("0xb1a32FC9F9D8b2cf86C068Cae13108809547ef71"),
@@ -97,7 +89,6 @@ const CHAIN_SPECIFIC_CONFIGS: Record<number, ChainSpecificData> = {
     ponderIndexerUrl: process.env.INDEXER_URL!,
     swapForWrappedNativeUrl:
       "https://app.uniswap.org/swap?outputCurrency=0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2&chain=mainnet",
-    reservoirApiUrl: "https://api.reservoir.tools",
   },
   [sepolia.id]: {
     chain: sepolia,
@@ -116,10 +107,6 @@ const CHAIN_SPECIFIC_CONFIGS: Record<number, ChainSpecificData> = {
         ),
       ]),
     }),
-    reservoirChain: {
-      ...reservoirChains.sepolia,
-      active: true,
-    },
     addresses: {
       nounsToken: getAddress("0x4C4674bb72a096855496a7204962297bd7e12b85"),
       nounsTreasury: getAddress("0x07e5D6a1550aD5E597A9b0698A474AA080A2fB28"),
@@ -148,16 +135,8 @@ const CHAIN_SPECIFIC_CONFIGS: Record<number, ChainSpecificData> = {
     },
     ponderIndexerUrl: process.env.INDEXER_URL!, // mainnet for now, didn't deploy for sepolia yet, don't use for testnet but this satisfies codegen
     swapForWrappedNativeUrl: "",
-    reservoirApiUrl: "https://api-sepolia.reservoir.tools",
   },
 };
 
 export const CHAIN_CONFIG =
   CHAIN_SPECIFIC_CONFIGS[Number(process.env.NEXT_PUBLIC_CHAIN_ID!)]!;
-
-export const reservoirClient = createReservoirClient({
-  chains: [CHAIN_CONFIG.reservoirChain],
-  source: "nouns.com",
-  synchronousStepItemExecution: true,
-  apiKey: process.env.NEXT_PUBLIC_RESERVOIR_API_KEY!,
-});

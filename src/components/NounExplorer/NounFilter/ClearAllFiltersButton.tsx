@@ -5,7 +5,6 @@ import { useSearchParams } from "next/navigation";
 import { INSTANT_SWAP_FILTER_KEY } from "./InstantSwapFilter";
 import { cn } from "@/utils/shadcn";
 import { scrollToNounExplorer } from "@/utils/scroll";
-import { BUY_NOW_FILTER_KEY } from "./BuyNowFilter";
 
 export function ClearAllFiltersButton({ className, ...props }: ButtonHTMLAttributes<HTMLButtonElement>) {
   const searchParams = useSearchParams();
@@ -14,7 +13,6 @@ export function ClearAllFiltersButton({ className, ...props }: ButtonHTMLAttribu
     const params = new URLSearchParams(searchParams.toString());
     params.delete(ONLY_TREASURY_NOUNS_FILTER_KEY);
     params.delete(INSTANT_SWAP_FILTER_KEY);
-    params.delete(BUY_NOW_FILTER_KEY);
     params.delete("background[]");
     params.delete("head[]");
     params.delete("glasses[]");

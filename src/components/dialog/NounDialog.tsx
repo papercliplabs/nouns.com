@@ -2,7 +2,7 @@
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import clsx from "clsx";
 import Image from "next/image";
-import { Noun, NounTraitType, SecondaryNounListing } from "@/data/noun/types";
+import { Noun, NounTraitType } from "@/data/noun/types";
 import { Separator } from "../ui/separator";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { CHAIN_CONFIG } from "@/config";
@@ -12,10 +12,7 @@ import { Skeleton } from "../ui/skeleton";
 import { useNounImage } from "@/hooks/useNounImage";
 import Icon from "../ui/Icon";
 import { scrollToNounExplorer } from "@/utils/scroll";
-import { formatTokenAmount } from "@/utils/utils";
 import { formatNumber } from "@/utils/format";
-import NounsFloor from "../SecondaryFloor";
-import BuyNounOnSecondaryDialog from "./BuyNounOnSecondaryDialog";
 import { Avatar, Name } from "@paperclip-labs/whisk-sdk/identity";
 import { LinkExternal } from "../ui/link";
 import { useQuery } from "@tanstack/react-query";
@@ -30,12 +27,10 @@ import { isAddressEqual } from "viem";
 
 interface NounsDialogProps {
   nouns: Noun[];
-  secondaryFloorListing: SecondaryNounListing | null;
 }
 
 export default function NounDialog({
   nouns,
-  secondaryFloorListing,
 }: NounsDialogProps) {
   const searchParams = useSearchParams();
   const nounId = searchParams.get("nounId");
@@ -65,20 +60,20 @@ export default function NounDialog({
     }
   }
 
-  const heldByTreasury = useMemo(() => {
-    return noun?.owner == CHAIN_CONFIG.addresses.nounsTreasury;
-  }, [noun]);
+  const heldByTreasury = useMemo(
+    () => noun != null && isAddressEqual(noun.owner, CHAIN_CONFIG.addresses.nounsTreasury),
+    [noun],
+  );
 
-  const heldByNounsErc20 = useMemo(() => {
-    return noun?.owner == CHAIN_CONFIG.addresses.nounsErc20;
-  }, [noun]);
+  const heldByNounsErc20 = useMemo(
+    () => noun != null && isAddressEqual(noun.owner, CHAIN_CONFIG.addresses.nounsErc20),
+    [noun],
+  );
 
-  const isAuctionNoun = useMemo(() => {
-    return (
-      noun &&
-      isAddressEqual(noun.owner, CHAIN_CONFIG.addresses.nounsAuctionHouseProxy)
-    );
-  }, [noun]);
+  const isAuctionNoun = useMemo(
+    () => noun != null && isAddressEqual(noun.owner, CHAIN_CONFIG.addresses.nounsAuctionHouseProxy),
+    [noun],
+  );
 
   if (!noun) {
     return null;
@@ -151,47 +146,6 @@ export default function NounDialog({
               </>
             )}
 
-            {noun.secondaryListing && (
-              <>
-                <div className="flex flex-col gap-6 rounded-[20px] bg-white p-4">
-                  <div className="flex items-start justify-between">
-                    <div className="flex flex-col gap-1">
-                      <span className="text-content-secondary label-md">
-                        List Price
-                      </span>
-                      <span className="font-pt text-[28px] font-bold leading-[36px] text-content-primary">
-                        {formatTokenAmount(
-                          BigInt(noun.secondaryListing.priceRaw),
-                          18,
-                        )}{" "}
-                        ETH
-                      </span>
-                      {noun.secondaryListing.priceUsd && (
-                        <span className="text-content-secondary label-sm">
-                          {formatNumber({
-                            input: noun.secondaryListing.priceUsd,
-                            unit: "USD",
-                          })}
-                        </span>
-                      )}
-                    </div>
-                    <Image
-                      src={noun.secondaryListing.marketIcon ?? ""}
-                      width={36}
-                      height={36}
-                      alt={noun.secondaryListing.marketName ?? ""}
-                    />
-                  </div>
-                  <NounsFloor listing={secondaryFloorListing} />
-                  <BuyNounOnSecondaryDialog noun={noun} />
-                </div>
-                <div className="text-content-secondary">
-                  Buy this Noun instantly from the secondary market via
-                  Nouns.com with no additional fees!
-                </div>
-              </>
-            )}
-
             {isAuctionNoun && (
               <>
                 <Link href="/">
@@ -230,7 +184,7 @@ export default function NounDialog({
                 <Image src="/nogs.png" width={24} height={24} alt="" />
                 <span>
                   $NOGS:{" "}
-                  {nogsValue != null && nogsValue != undefined
+                  {nogsValue != null
                     ? formatNumber({ input: nogsValue })
                     : "-"}
                 </span>

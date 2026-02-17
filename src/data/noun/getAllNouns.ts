@@ -6,7 +6,6 @@ import { Noun } from "./types";
 import { AllNounsQuery } from "../generated/gql/graphql";
 import { revalidateTag, unstable_cache } from "next/cache";
 import { transformQueryNounToNoun } from "./helpers";
-import { getSecondaryNounListings } from "./getSecondaryNounListings";
 
 const BATCH_SIZE = 1000;
 
@@ -66,43 +65,23 @@ const runPaginatedNounsQuery = unstable_cache(
 );
 
 export async function getAllNounsUncached(): Promise<Noun[]> {
-  const [queryResponse, secondaryNounListings] = await Promise.all([
-    runPaginatedNounsQueryUncached(),
-    getSecondaryNounListings(),
-  ]);
-  let nouns = queryResponse.map(transformQueryNounToNoun);
+  const queryResponse = await runPaginatedNounsQueryUncached();
+  const nouns = queryResponse.map(transformQueryNounToNoun);
 
   // Sort by id, descending
   nouns.sort((a, b) => (BigInt(b.id) > BigInt(a.id) ? 1 : -1));
 
-  const fullNouns = nouns.map((noun) => ({
-    ...noun,
-    secondaryListing: secondaryNounListings.find(
-      (listing) => listing.nounId === noun.id,
-    ),
-  })) as Noun[];
-
-  return fullNouns;
+  return nouns;
 }
 
 export async function getAllNouns(): Promise<Noun[]> {
-  const [queryResponse, secondaryNounListings] = await Promise.all([
-    runPaginatedNounsQuery(),
-    getSecondaryNounListings(),
-  ]);
-  let nouns = queryResponse.map(transformQueryNounToNoun);
+  const queryResponse = await runPaginatedNounsQuery();
+  const nouns = queryResponse.map(transformQueryNounToNoun);
 
   // Sort by id, descending
   nouns.sort((a, b) => (BigInt(b.id) > BigInt(a.id) ? 1 : -1));
 
-  const fullNouns = nouns.map((noun) => ({
-    ...noun,
-    secondaryListing: secondaryNounListings.find(
-      (listing) => listing.nounId === noun.id,
-    ),
-  })) as Noun[];
-
-  return fullNouns;
+  return nouns;
 }
 
 export async function forceAllNounRevalidation() {

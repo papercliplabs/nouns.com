@@ -8,21 +8,14 @@ import { formatNumber } from "@/utils/format";
 import { AuctionDetailTemplate } from "./AuctionDetailsTemplate";
 import { Auction } from "@/data/auction/types";
 import { BidHistoryDialog } from "./BidHistoryDialog";
-import { SecondaryNounListing, SecondaryNounOffer } from "@/data/noun/types";
-import SecondaryFloor from "../SecondaryFloor";
-import SecondaryTopOffer from "../SecondaryTopOffer";
 import { Client } from "@/data/ponder/client/getClients";
 import { Name } from "@paperclip-labs/whisk-sdk/identity";
 
 export function LiveAuction({
   auction,
-  secondaryFloorListing,
-  secondaryTopOffer,
   clients,
 }: {
   auction: Auction;
-  secondaryFloorListing: SecondaryNounListing | null;
-  secondaryTopOffer: SecondaryNounOffer | null;
   clients: Client[];
 }) {
   const [timeRemainingS, setTimeRemainingS] = useState<number | undefined>(
@@ -71,11 +64,6 @@ export function LiveAuction({
             onClick: () => setShowLocalTime((prev) => !prev),
           }}
         />
-        <div className="text-content-secondary flex items-center gap-2">
-          <SecondaryFloor listing={secondaryFloorListing} redThreshold={BigInt(auction.nextMinBid)} />
-          {secondaryFloorListing && secondaryTopOffer && <span>•</span>}
-          <SecondaryTopOffer offer={secondaryTopOffer} />
-        </div>
       </div>
       <Bid nounId={BigInt(auction.nounId)} nextMinBid={BigInt(auction.nextMinBid)} />
       {auction.bids.length > 0 && (

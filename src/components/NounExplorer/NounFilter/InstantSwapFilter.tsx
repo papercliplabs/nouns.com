@@ -14,7 +14,7 @@ export default function InstantSwapFilter() {
     return params.get(INSTANT_SWAP_FILTER_KEY) === "1";
   }, [searchParams]);
 
-  const handleOnlyTreasuryNounFilterChange = useCallback(
+  const handleInstantSwapFilterChange = useCallback(
     (checked: boolean) => {
       const params = new URLSearchParams(searchParams.toString());
       if (!checked) {
@@ -30,7 +30,7 @@ export default function InstantSwapFilter() {
   );
 
   return (
-    <FilterItemButton isChecked={isChecked} onClick={() => handleOnlyTreasuryNounFilterChange(!isChecked)}>
+    <FilterItemButton isChecked={isChecked} onClick={() => handleInstantSwapFilterChange(!isChecked)}>
       <div className="flex items-center gap-2">
         <Icon icon="swap" size={20} className="fill-content-primary" />
         <h6>Instant Swap</h6>

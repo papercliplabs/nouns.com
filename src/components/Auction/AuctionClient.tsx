@@ -8,8 +8,6 @@ import {
   auctionQuery,
   currentAuctionIdQuery,
   nounQuery,
-  secondaryFloorListingQuery,
-  secondaryTopOfferQuery,
 } from "@/data/tanstackQueries";
 import { LiveAuction } from "./LiveAuction";
 import { EndedAuction } from "./EndedAuction";
@@ -31,14 +29,6 @@ export default function AuctionClient({ clients }: { clients: Client[] }) {
       ...currentAuctionIdQuery(),
     },
   );
-
-  const { data: secondaryFloorListing } = useQuery({
-    ...secondaryFloorListingQuery(),
-  });
-
-  const { data: secondaryTopOffer } = useQuery({
-    ...secondaryTopOfferQuery(),
-  });
 
   const auctionId = useMemo(() => {
     return requestedAuctionId ?? currentAuctionId ?? undefined;
@@ -165,8 +155,6 @@ export default function AuctionClient({ clients }: { clients: Client[] }) {
           (auction.state == "live" ? (
             <LiveAuction
               auction={auction}
-              secondaryFloorListing={secondaryFloorListing ?? null}
-              secondaryTopOffer={secondaryTopOffer ?? null}
               clients={clients}
             />
           ) : (

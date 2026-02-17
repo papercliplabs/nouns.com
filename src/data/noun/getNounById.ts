@@ -1,13 +1,12 @@
 "use server";
 import { Noun } from "./types";
-import { checkForAllNounRevalidation, forceAllNounRevalidation, getAllNouns } from "./getAllNouns";
+import { checkForAllNounRevalidation } from "./getAllNouns";
 import { graphql } from "../generated/gql";
 import { graphQLFetchWithFallback } from "../utils/graphQLFetch";
 import { CHAIN_CONFIG } from "@/config";
 import { transformQueryNounToNoun } from "./helpers";
 import { unstable_cache } from "next/cache";
 import { SECONDS_PER_HOUR } from "@/utils/constants";
-import { getSecondaryListingForNoun } from "./getSecondaryNounListings";
 
 const query = graphql(/* GraphQL */ `
   query NounById($id: ID!) {
@@ -28,25 +27,14 @@ const query = graphql(/* GraphQL */ `
 `);
 
 export async function getNounByIdUncached(id: string): Promise<Noun | undefined> {
-  const [response, secondaryListing] = await Promise.all([
-    graphQLFetchWithFallback(CHAIN_CONFIG.subgraphUrl, query, { id }, { next: { revalidate: 0 } }),
-    getSecondaryListingForNoun(id),
-  ]);
-  const noun = response ? transformQueryNounToNoun(response.noun as any) : undefined;
-
-  if (noun) {
-    checkForAllNounRevalidation(id);
-    const fullNoun: Noun = { ...noun, secondaryListing };
-    return fullNoun;
-  } else {
-    return undefined;
-  }
+  const response = await graphQLFetchWithFallback(CHAIN_CONFIG.subgraphUrl, query, { id }, { next: { revalidate: 0 } });
+  return response ? transformQueryNounToNoun(response.noun as any) : undefined;
 }
 
 const getNounByIdCached = unstable_cache(getNounByIdUncached, ["get-noun-by-id"], { revalidate: SECONDS_PER_HOUR });
 
 export async function getNounById(id: string): Promise<Noun | undefined> {
-  const [noun, secondaryListing] = await Promise.all([getNounByIdCached(id), getSecondaryListingForNoun(id)]);
+  const noun = await getNounByIdCached(id);
 
   // Kickoff a check to revalidate all in grid (when its a new Noun)
   checkForAllNounRevalidation(id);

@@ -8,7 +8,6 @@ import TreasuryNounFilter from "./TreasuryNounFilter";
 import { ClearAllFiltersButton } from "./ClearAllFiltersButton";
 import { cn } from "@/utils/shadcn";
 import InstantSwapFilter from "./InstantSwapFilter";
-import BuyNowFilter from "./BuyNowFilter";
 import Icon from "@/components/ui/Icon";
 import { DrawerTrigger, Drawer, DrawerContent } from "@/components/ui/drawer";
 import { Button } from "@/components/ui/button";
@@ -121,13 +120,6 @@ function FilterMenu() {
         <ClearAllFiltersButton className="hidden text-semantic-accent clickable-active md:flex">
           Clear all
         </ClearAllFiltersButton>
-      </div>
-      <Separator className="h-[2px]" />
-      <div>
-        <BuyNowFilter />
-        <span className="text-content-secondary paragraph-sm">
-          Show Nouns that are listed on secondary that you can buy now.
-        </span>
       </div>
       <Separator className="h-[2px]" />
       <div>
