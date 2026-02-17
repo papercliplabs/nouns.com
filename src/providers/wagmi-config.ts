@@ -25,7 +25,8 @@ export const wagmiConfig = createConfig(
 
     // Suppress WalletConnect SSR error: "indexedDB is not defined".
     // https://github.com/WalletConnect/walletconnect-monorepo/issues/6841
-    // ConnectKit uses its defaults when connectors is undefined.
+    // SSR: pass [] to skip WalletConnect init (avoids indexedDB access).
+    // Client: returns undefined, so ConnectKit builds its default connectors.
     connectors: typeof indexedDB === "undefined" ? [] : undefined,
 
     ssr: true,
