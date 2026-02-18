@@ -8,13 +8,13 @@ import {
   auctionQuery,
   currentAuctionIdQuery,
   nounQuery,
-  secondaryFloorListingQuery,
-  secondaryTopOfferQuery,
 } from "@/data/tanstackQueries";
 import { LiveAuction } from "./LiveAuction";
 import { EndedAuction } from "./EndedAuction";
 import { Client } from "@/data/ponder/client/getClients";
 import { NounImageBase } from "../NounImage";
+import { Skeleton } from "../ui/skeleton";
+import { AuctionDetailTemplate } from "./AuctionDetailsTemplate";
 
 const PREFETCH_DISTANCE = 3;
 
@@ -31,14 +31,6 @@ export default function AuctionClient({ clients }: { clients: Client[] }) {
       ...currentAuctionIdQuery(),
     },
   );
-
-  const { data: secondaryFloorListing } = useQuery({
-    ...secondaryFloorListingQuery(),
-  });
-
-  const { data: secondaryTopOffer } = useQuery({
-    ...secondaryTopOfferQuery(),
-  });
 
   const auctionId = useMemo(() => {
     return requestedAuctionId ?? currentAuctionId ?? undefined;
@@ -161,17 +153,34 @@ export default function AuctionClient({ clients }: { clients: Client[] }) {
           </div>
         </div>
 
-        {auction &&
-          (auction.state == "live" ? (
-            <LiveAuction
-              auction={auction}
-              secondaryFloorListing={secondaryFloorListing ?? null}
-              secondaryTopOffer={secondaryTopOffer ?? null}
-              clients={clients}
-            />
+        {auction ? (
+          auction.state == "live" ? (
+            <LiveAuction auction={auction} clients={clients} />
           ) : (
             <EndedAuction auction={auction} clients={clients} />
-          ))}
+          )
+        ) : (
+          <>
+            <div className="flex w-full flex-col gap-2 md:w-fit">
+              <AuctionDetailTemplate
+                item1={{
+                  title: "Current bid",
+                  value: <Skeleton className="h-5 w-20 md:h-9 md:w-28" />,
+                }}
+                item2={{
+                  title: "Time left",
+                  value: <Skeleton className="h-5 w-24 md:h-9 md:w-32" />,
+                }}
+              />
+            </div>
+            <div className="flex w-full flex-col gap-1">
+              <div className="flex flex-col gap-2 md:flex-row md:gap-4">
+                <Skeleton className="h-[46px] w-full rounded-[12px] md:w-[260px]" />
+                <Skeleton className="h-[46px] w-full rounded-[12px] md:w-[131px]" />
+              </div>
+            </div>
+          </>
+        )}
       </div>
     </>
   );

@@ -9,10 +9,9 @@ import { INSTANT_SWAP_FILTER_KEY } from "./InstantSwapFilter";
 import { useNounFilters } from "@/hooks/useNounFilters";
 import clsx from "clsx";
 import { scrollToNounExplorer } from "@/utils/scroll";
-import { BUY_NOW_FILTER_KEY } from "./BuyNowFilter";
 
 export function ActiveFilters({ numNouns }: { numNouns: number }) {
-  const { background, head, glasses, body, accessory, heldByTreasury, heldByNounsErc20, buyNow, totalCount } =
+  const { background, head, glasses, body, accessory, heldByTreasury, heldByNounsErc20, totalCount } =
     useNounFilters();
 
   return (
@@ -24,7 +23,6 @@ export function ActiveFilters({ numNouns }: { numNouns: number }) {
       <div className="no-scrollbar flex w-full min-w-0 flex-row items-center gap-2 overflow-x-auto">
         {heldByTreasury && <ActiveFilterItem seed={"1"} type="heldByTreasury" key={"heldByTreasury"} />}
         {heldByNounsErc20 && <ActiveFilterItem seed={"1"} type="heldByNounsErc20" key={"heldByNounsErc20"} />}
-        {buyNow && <ActiveFilterItem seed={"1"} type="buyNow" key={"buyNow"} />}
         {background.map((seed) => (
           <ActiveFilterItem seed={seed} type="background" key={"background" + seed} />
         ))}
@@ -47,7 +45,7 @@ export function ActiveFilters({ numNouns }: { numNouns: number }) {
 }
 
 interface ActiveFilterItemInterface {
-  type: NounTraitType | "heldByNounsErc20" | "heldByTreasury" | "buyNow";
+  type: NounTraitType | "heldByNounsErc20" | "heldByTreasury";
   seed: string;
 }
 
@@ -66,11 +64,6 @@ function ActiveFilterItem({ type, seed }: ActiveFilterItemInterface) {
       } else if (type == "heldByNounsErc20") {
         if (params.get(INSTANT_SWAP_FILTER_KEY) === "1") {
           params.delete(INSTANT_SWAP_FILTER_KEY);
-          window.history.pushState(null, "", `?${params.toString()}`);
-        }
-      } else if (type == "buyNow") {
-        if (params.get(BUY_NOW_FILTER_KEY) === "1") {
-          params.delete(BUY_NOW_FILTER_KEY);
           window.history.pushState(null, "", `?${params.toString()}`);
         }
       } else {
@@ -105,8 +98,6 @@ function ActiveFilterItem({ type, seed }: ActiveFilterItemInterface) {
         <span className="text-content-primary">Treasury Nouns</span>
       ) : type === "heldByNounsErc20" ? (
         <span className="text-content-primary">Instant Swap</span>
-      ) : type === "buyNow" ? (
-        <span className="text-content-primary">Buy Now</span>
       ) : (
         <>
           <span>{type}: </span>
@@ -118,26 +109,14 @@ function ActiveFilterItem({ type, seed }: ActiveFilterItemInterface) {
   );
 }
 
+const TRAIT_MAP: Record<NounTraitType, NounTrait[]> = {
+  background: BACKGROUND_TRAITS,
+  head: HEAD_TRAITS,
+  glasses: GLASSES_TRAITS,
+  body: BODY_TRAITS,
+  accessory: ACCESSORY_TRAITS,
+};
+
 function getNameForTrait(traitType: NounTraitType, seed: string) {
-  let traits: NounTrait[] = [];
-
-  switch (traitType) {
-    case "background":
-      traits = BACKGROUND_TRAITS;
-      break;
-    case "head":
-      traits = HEAD_TRAITS;
-      break;
-    case "glasses":
-      traits = GLASSES_TRAITS;
-      break;
-    case "body":
-      traits = BODY_TRAITS;
-      break;
-    case "accessory":
-      traits = ACCESSORY_TRAITS;
-      break;
-  }
-
-  return traits.find((trait) => trait.seed === parseInt(seed))?.name;
+  return TRAIT_MAP[traitType].find((trait) => trait.seed === parseInt(seed))?.name;
 }

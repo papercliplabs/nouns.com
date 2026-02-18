@@ -13,7 +13,6 @@ const NAV_ITEMS: { name: string; href: string; external?: boolean }[][] = [
   ],
   [
     { name: "Bid", href: "/" },
-    { name: "Shop", href: "/explore?buyNow=1" },
     { name: "Swap", href: "/explore?instantSwap=1" },
     { name: "Trade", href: "/explore?onlyTreasuryNouns=1" },
   ],

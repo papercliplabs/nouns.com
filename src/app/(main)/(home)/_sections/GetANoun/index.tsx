@@ -19,10 +19,10 @@ export default function GetANoun() {
           <JoinAuction />
         </CurrentAuctionPrefetchWrapper>
         <FeatureHighlightCard
-          href="/explore?buyNow=1"
+          href="/explore"
           iconSrc="/feature/shop/icon.svg"
-          buttonLabel="Shop"
-          description="Buy a Noun! Shop all major marketplaces in one place."
+          buttonLabel="Explore"
+          description="Browse the full collection of Nouns."
           className="bg-background-secondary"
         >
           <Image

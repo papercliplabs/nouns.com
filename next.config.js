@@ -2,7 +2,11 @@
 const nextConfig = {
   webpack: (config) => {
     config.externals.push("pino-pretty", "lokijs", "encoding");
-    config.resolve.fallback = { fs: false };
+    config.resolve.fallback = {
+      ...config.resolve.fallback,
+      fs: false,
+      "@react-native-async-storage/async-storage": false,
+    };
 
     // Fix for Coinbase Wallet SDK HeartbeatWorker module syntax issue
     config.module.rules.push({
@@ -11,6 +15,11 @@ const nextConfig = {
     });
 
     return config;
+  },
+  turbopack: {
+    resolveAlias: {
+      "@react-native-async-storage/async-storage": "./turbo-empty.ts",
+    },
   },
   reactStrictMode: false,
   logging: {

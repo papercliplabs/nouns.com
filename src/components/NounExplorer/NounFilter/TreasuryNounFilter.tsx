@@ -14,7 +14,7 @@ export default function TreasuryNounFilter() {
     return params.get(ONLY_TREASURY_NOUNS_FILTER_KEY) === "1";
   }, [searchParams]);
 
-  const handleOnlyInstantSwapFilterChange = useCallback(
+  const handleTreasuryNounFilterChange = useCallback(
     (checked: boolean) => {
       const params = new URLSearchParams(searchParams.toString());
       if (!checked) {
@@ -30,7 +30,7 @@ export default function TreasuryNounFilter() {
   );
 
   return (
-    <FilterItemButton isChecked={isChecked} onClick={() => handleOnlyInstantSwapFilterChange(!isChecked)}>
+    <FilterItemButton isChecked={isChecked} onClick={() => handleTreasuryNounFilterChange(!isChecked)}>
       <div className="flex items-center gap-2">
         <Icon icon="treasury" size={20} className="fill-content-primary" />
         <h6>Treasury Nouns</h6>

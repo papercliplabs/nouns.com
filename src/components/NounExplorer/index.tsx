@@ -41,7 +41,6 @@ export default function NounExplorer({ nouns }: NounExplorerProps) {
       const instantSwapMatch =
         !filters.heldByNounsErc20 ||
         isAddressEqual(noun.owner, CHAIN_CONFIG.addresses.nounsErc20);
-      const buyNowMatch = !filters.buyNow || noun.secondaryListing != undefined;
 
       return (
         backgroundMatch &&
@@ -50,8 +49,7 @@ export default function NounExplorer({ nouns }: NounExplorerProps) {
         bodyMatch &&
         accessoryMatch &&
         treasuryNounMatch &&
-        instantSwapMatch &&
-        buyNowMatch
+        instantSwapMatch
       );
     });
   }, [filters, nouns]);

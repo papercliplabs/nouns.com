@@ -11,15 +11,9 @@ import {
   auctionQuery,
   currentAuctionIdQuery,
   nounQuery,
-  secondaryFloorListingQuery,
-  secondaryTopOfferQuery,
 } from "@/data/tanstackQueries";
 import { getAuctionById } from "@/data/auction/getAuctionById";
 import { getNounByIdUncached } from "@/data/noun/getNounById";
-import {
-  getSecondaryFloorListing,
-  getSecondaryTopOffer,
-} from "@/data/noun/getSecondaryNounListings";
 import { getClients } from "@/data/ponder/client/getClients";
 
 export default async function Auction({
@@ -64,14 +58,6 @@ async function AuctionWrapper({
     queryClient.prefetchQuery({
       queryKey: nounQuery(auctionId).queryKey,
       queryFn: async () => await getNounByIdUncached(auctionId),
-    }),
-    queryClient.prefetchQuery({
-      queryKey: secondaryFloorListingQuery().queryKey,
-      queryFn: async () => await getSecondaryFloorListing(),
-    }),
-    queryClient.prefetchQuery({
-      queryKey: secondaryTopOfferQuery().queryKey,
-      queryFn: async () => await getSecondaryTopOffer(),
     }),
   ]);
 

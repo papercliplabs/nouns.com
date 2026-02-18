@@ -9,7 +9,6 @@ import { useInView } from "framer-motion";
 import { useNounImage } from "@/hooks/useNounImage";
 import Icon from "./ui/Icon";
 import clsx from "clsx";
-import { formatTokenAmount } from "@/utils/utils";
 import { isAddressEqual } from "viem";
 
 interface NounCardProps {
@@ -30,20 +29,17 @@ export default function NounCard({
   const ref = useRef<HTMLDivElement | null>(null);
   const isInView = useInView(ref, { margin: "500px 0px" });
   const isTreasuryNoun = useMemo(
-    () => noun.owner == CHAIN_CONFIG.addresses.nounsTreasury,
+    () => isAddressEqual(noun.owner, CHAIN_CONFIG.addresses.nounsTreasury),
     [noun.owner],
   );
   const isHeldByNounsErc20 = useMemo(
-    () => noun.owner == CHAIN_CONFIG.addresses.nounsErc20,
+    () => isAddressEqual(noun.owner, CHAIN_CONFIG.addresses.nounsErc20),
     [noun.owner],
   );
-
-  const isAuctionNoun = useMemo(() => {
-    return isAddressEqual(
-      CHAIN_CONFIG.addresses.nounsAuctionHouseProxy,
-      noun.owner,
-    );
-  }, [noun.owner]);
+  const isAuctionNoun = useMemo(
+    () => isAddressEqual(noun.owner, CHAIN_CONFIG.addresses.nounsAuctionHouseProxy),
+    [noun.owner],
+  );
 
   const nounImage = useNounImage("full", noun);
 
@@ -104,29 +100,6 @@ export default function NounCard({
               <TooltipContent>
                 This Noun is held by the $nouns ERC-20 contract. It can be
                 instantly swapped with any Noun you own.
-              </TooltipContent>
-            </Tooltip>
-          )}
-          {noun.secondaryListing && enableHover && (
-            <Tooltip>
-              <TooltipTrigger className="absolute right-2 top-2 z-[6]" asChild>
-                <div className="flex items-center gap-1 rounded-full bg-[#212529]/40 py-[5px] pl-1.5 pr-2 text-center text-white backdrop-blur-[2px] label-sm">
-                  <Image
-                    src="/ethereum-logo.png"
-                    width={20}
-                    height={20}
-                    alt="Ξ"
-                  />
-                  <span>
-                    {formatTokenAmount(
-                      BigInt(noun.secondaryListing.priceRaw),
-                      18,
-                    )}
-                  </span>
-                </div>
-              </TooltipTrigger>
-              <TooltipContent>
-                This Noun is listed on the secondary market.
               </TooltipContent>
             </Tooltip>
           )}
