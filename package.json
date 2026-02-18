@@ -45,7 +45,7 @@
     "framer-motion": "12.0.0-alpha.1",
     "frog": "^0.9.4",
     "graphql": "^16.8.1",
-    "lodash": "^4.17.21",
+    "lodash": "^4.17.23",
     "lucide-react": "^0.474.0",
     "micromark-util-sanitize-uri": "^2.0.1",
     "next": "14.2.35",
@@ -66,9 +66,17 @@
     "tailwindcss-animate": "^1.0.7",
     "usehooks-ts": "^3.1.0",
     "vaul": "^1.1.2",
-    "viem": "^2.34.0",
-    "wagmi": "^2.16.4",
+    "viem": "^2.46.2",
+    "wagmi": "^2.19.5",
     "zod": "^3.24.1"
+  },
+  "pnpm": {
+    "overrides": {
+      "glob": ">=10.5.0",
+      "h3": ">=1.15.5",
+      "hono": ">=4.11.7",
+      "preact": ">=10.26.10"
+    }
   },
   "devDependencies": {
     "@graphql-codegen/cli": "^5.0.2",
@@ -83,7 +91,7 @@
     "@wagmi/cli": "^2.1.8",
     "autoprefixer": "^10.4.19",
     "eslint": "^8.57.0",
-    "eslint-config-next": "14.2.18",
+    "eslint-config-next": "14.2.35",
     "postcss": "^8.4.38",
     "prettier": "^3.4.2",
     "prettier-plugin-tailwindcss": "^0.6.9",
