@@ -42,7 +42,7 @@ export default function MarkdownRenderer({
         blockquote: (props) => (
           <blockquote className="border-l-2 pl-2" {...props} />
         ),
-        img: (props) => <MarkdownImage src={props.src} title={props.title} />,
+        img: (props) => <MarkdownImage src={typeof props.src === "string" ? props.src : undefined} title={props.title} />,
         code: (props) => (
           <code
             className="flex max-w-full overflow-x-auto rounded-md bg-background-ternary p-2 scrollbar-thin"

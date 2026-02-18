@@ -4,25 +4,33 @@ import { formatNumber, formatTimeLeft } from "@/utils/format";
 import { formatEther } from "viem";
 import clsx from "clsx";
 import { useAuctionData } from "@/hooks/useAuctionData";
+import { Skeleton } from "../ui/skeleton";
 
 export function CurrentAuctionLarge() {
   const { auction, noun, timeRemainingS } = useAuctionData();
 
-  const items: { title: string; value: string }[] = [
+  const isLoading = !auction;
+
+  const items: { title: string; value: string | null }[] = [
     {
       title: "Current bid",
-      value: formatNumber({
-        input: Number(
-          formatEther(
-            auction?.bids[0]?.amount
-              ? BigInt(auction?.bids[0]?.amount)
-              : BigInt(0),
-          ),
-        ),
-        unit: "ETH",
-      }),
+      value: isLoading
+        ? null
+        : formatNumber({
+            input: Number(
+              formatEther(
+                auction.bids[0]?.amount
+                  ? BigInt(auction.bids[0].amount)
+                  : BigInt(0),
+              ),
+            ),
+            unit: "ETH",
+          }),
     },
-    { title: "Time left", value: formatTimeLeft(timeRemainingS ?? 0) },
+    {
+      title: "Time left",
+      value: timeRemainingS != null ? formatTimeLeft(timeRemainingS) : null,
+    },
   ];
 
   return (
@@ -42,7 +50,11 @@ export function CurrentAuctionLarge() {
             <span className="text-content-secondary label-sm">
               {item.title}
             </span>
-            <span className="heading-6">{item.value}</span>
+            {item.value != null ? (
+              <span className="heading-6">{item.value}</span>
+            ) : (
+              <Skeleton className="mt-1 h-5 w-20" />
+            )}
           </div>
         ))}
       </div>

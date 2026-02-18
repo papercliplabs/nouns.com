@@ -27,10 +27,7 @@ const CLIENT_INFO: Record<number, { url: string; icon: string } | undefined> = {
   12: { url: "https://proplaunchpad.com", icon: "/client/unknown.svg" },
   13: { url: "https://www.etherscan.io", icon: "/client/etherscan.png" },
   14: { url: "https://pronouns.gg", icon: "https://pronouns.gg/favicon.ico" },
-  15: {
-    url: "https://nouns.auction",
-    icon: "https://nouns.auction/favicon.ico",
-  },
+  15: { url: "https://nouns.auction", icon: "/client/unknown.svg" },
   16: {
     url: "https://lighthouse.cx",
     icon: "https://lighthouse.cx/favicon.ico",

@@ -31,7 +31,9 @@ export async function getNounByIdUncached(id: string): Promise<Noun | undefined>
   const noun = response ? transformQueryNounToNoun(response.noun as any) : undefined;
 
   // Kickoff a check to revalidate all in grid (when its a new Noun)
-  checkForAllNounRevalidation(id);
+  if (noun) {
+    checkForAllNounRevalidation(id);
+  }
 
   return noun;
 }

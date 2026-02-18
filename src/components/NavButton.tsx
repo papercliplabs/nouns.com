@@ -9,7 +9,7 @@ import { cn } from "@/utils/shadcn";
 interface NavButtonProps extends ComponentProps<typeof Button> {
   iconSrc: string;
   children: ReactNode;
-  hoverRef: React.RefObject<HTMLDivElement>;
+  hoverRef: React.RefObject<HTMLDivElement | null>;
 }
 
 export default function NavButton({

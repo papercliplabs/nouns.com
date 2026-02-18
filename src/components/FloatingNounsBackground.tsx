@@ -224,7 +224,7 @@ function FloatingNoun({
       scale: 1,
       opacity: 1,
       transition: {
-        type: "spring",
+        type: "spring" as const,
         duration: 1,
         bounce: 0,
         delay: appearDelay,
@@ -236,9 +236,9 @@ function FloatingNoun({
       y: [-randomValues.y, randomValues.y],
       transition: {
         duration: randomValues.duration,
-        ease: [0.455, 0.03, 0.515, 0.955],
+        ease: [0.455, 0.03, 0.515, 0.955] as [number, number, number, number],
         repeat: Infinity,
-        repeatType: "mirror",
+        repeatType: "mirror" as const,
       },
     },
   };
