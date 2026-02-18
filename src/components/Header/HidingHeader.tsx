@@ -5,7 +5,7 @@ import { motion, useMotionValueEvent, useScroll } from "framer-motion";
 import { usePathname } from "next/navigation";
 import { ReactNode, useMemo, useRef, useState } from "react";
 
-const FIXED_HEADER_ROUTES = ["/explore", "/stats", "/vote"];
+const FIXED_HEADER_ROUTES = ["/explore", "/stats"];
 
 interface HidingHeaderProps {
   children: ReactNode;

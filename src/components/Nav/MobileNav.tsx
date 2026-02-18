@@ -6,19 +6,12 @@ import Icon from "../ui/Icon";
 import clsx from "clsx";
 import { MOBILE_NAV_ITEMS } from "./navConfig";
 
-const HIDE_NAV_PATHNAME_REGEXS = [/^\/vote\/\d+$/];
-
 export default function MobileNav() {
   const pathName = usePathname();
 
-  const hide = false; // HIDE_NAV_PATHNAME_REGEXS.some((regex) => regex.test(pathName));
-
   return (
     <div
-      className={clsx(
-        "fixed bottom-0 left-0 right-0 z-50 justify-between gap-2 bg-white px-4 pb-[env(safe-area-inset-bottom)] shadow-fixed-bottom md:hidden",
-        hide ? "hidden" : "flex",
-      )}
+      className="fixed bottom-0 left-0 right-0 z-50 flex justify-between gap-2 bg-white px-4 pb-[env(safe-area-inset-bottom)] shadow-fixed-bottom md:hidden"
     >
       {MOBILE_NAV_ITEMS.map((item, i) => {
         const active =

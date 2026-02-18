@@ -2,9 +2,9 @@ import { ProposalOverview } from "@/data/ponder/governance/common";
 import { formatTimeLeft } from "@/utils/format";
 import clsx from "clsx";
 import { truncate } from "lodash";
-import Link from "next/link";
 import Icon from "../ui/Icon";
 import { ProposalStateBadge } from "./ProposalStateBadge";
+import { LinkExternal } from "../ui/link";
 
 export function ProposalOverviewCard({
   proposalOverview,
@@ -33,8 +33,8 @@ export function ProposalOverviewCard({
   const timeToVotingEndFormatted = formatTimeLeft(endTimeDelta, true);
 
   return (
-    <Link
-      href={`/vote/${proposalOverview.id}`}
+    <LinkExternal
+      href={`https://nouns.wtf/vote/${proposalOverview.id}`}
       className="flex w-full justify-between rounded-[16px] border p-4 transition-colors hover:bg-background-ternary"
     >
       <div className="flex w-full items-center gap-6">
@@ -101,7 +101,7 @@ export function ProposalOverviewCard({
           </div>
         </div>
       </div>
-    </Link>
+    </LinkExternal>
   );
 }
 

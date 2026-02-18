@@ -3,7 +3,6 @@ import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import Icon from "@/components/ui/Icon";
 import JoinFarcasterCommunity from "@/components/JoinFarcasterCommunity";
-import Link from "next/link";
 
 export default function StartJourney() {
   return (
@@ -18,8 +17,8 @@ export default function StartJourney() {
       <div className="flex w-full max-w-[1600px] flex-col gap-6 md:flex-row md:gap-10">
         <JoinFarcasterCommunity />
 
-        <Link
-          href="/vote"
+        <LinkExternal
+          href="https://nouns.wtf/vote"
           className="flex w-full flex-1 flex-col items-center justify-start gap-6 overflow-hidden rounded-3xl bg-background-dark p-6 text-center text-white transition-all hover:brightness-75 md:p-12"
         >
           <Image src="/proposals.svg" width={48} height={48} alt="Proposals" />
@@ -41,7 +40,7 @@ export default function StartJourney() {
               className="fill-content-primary"
             />
           </Button>
-        </Link>
+        </LinkExternal>
       </div>
     </section>
   );

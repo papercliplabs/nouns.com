@@ -53,10 +53,8 @@ export function Proposals() {
               <LinkExternal
                 href={
                   proposal.state == ProposalState.Candidate
-                    ? CHAIN_CONFIG.nounsGovernanceUrl +
-                      "/candidates/" +
-                      proposal.id
-                    : "/vote/" + proposal.id
+                    ? `${CHAIN_CONFIG.nounsGovernanceUrl}/candidates/${proposal.id}`
+                    : `https://nouns.wtf/vote/${proposal.id}`
                 }
                 className="flex w-full flex-col items-center gap-4 rounded-2xl border-2 border-border-secondary p-6 text-center text-content-secondary hover:bg-background-secondary md:flex-row md:justify-start md:text-start"
                 key={i}

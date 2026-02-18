@@ -1,5 +1,4 @@
 import { getPostOverviews } from "@/data/cms/getPostOverviews";
-import { getProposalOverviews } from "@/data/ponder/governance/getProposalOverviews";
 import type { MetadataRoute } from "next";
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
@@ -11,14 +10,6 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     priority: 0.9,
   })) ?? []) as MetadataRoute.Sitemap;
 
-  const proposalOverviews = await getProposalOverviews();
-  const proposals = (proposalOverviews?.map((proposal) => ({
-    url: `https://www.nouns.com/vote/${proposal.id}`,
-    lastModified: new Date(),
-    changeFrequency: "weekly",
-    priority: 0.7,
-  })) ?? []) as MetadataRoute.Sitemap;
-
   return [
     {
       url: "https://www.nouns.com",
@@ -27,18 +18,11 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       priority: 1,
     },
     {
-      url: "https://www.nouns.com/vote",
-      lastModified: new Date(),
-      changeFrequency: "daily",
-      priority: 0.9,
-    },
-    {
       url: "https://www.nouns.com/$nouns",
       lastModified: new Date(),
       changeFrequency: "monthly",
       priority: 0.8,
     },
-
     {
       url: "https://www.nouns.com/learn",
       lastModified: new Date(),
@@ -81,7 +65,6 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       changeFrequency: "weekly",
       priority: 0.8,
     },
-    ...proposals,
     ...learnBlogs,
   ];
 }

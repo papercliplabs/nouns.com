@@ -51,6 +51,16 @@ const nextConfig = {
         destination: "/stats/treasury",
         permanent: true,
       },
+      {
+        source: "/vote",
+        destination: "https://nouns.wtf/vote",
+        permanent: false,
+      },
+      {
+        source: "/vote/:id",
+        destination: "https://nouns.wtf/vote/:id",
+        permanent: false,
+      },
     ];
   },
 };
