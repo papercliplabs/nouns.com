@@ -5,7 +5,6 @@ Bid, explore, buy, and swap to find your forever Noun.
 ## Deployments
 
 - Mainnet: [nouns.com](https://www.nouns.com)
-- Sepolia: [sepolia.nouns.com](https://www.sepolia.nouns.com)
 
 ## Local Development
 
