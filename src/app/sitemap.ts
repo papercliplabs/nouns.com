@@ -36,12 +36,6 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       priority: 0.5,
     },
     {
-      url: "https://www.nouns.com/convert",
-      lastModified: new Date(),
-      changeFrequency: "monthly",
-      priority: 0.5,
-    },
-    {
       url: "https://www.nouns.com/stats/treasury",
       lastModified: new Date(),
       changeFrequency: "weekly",

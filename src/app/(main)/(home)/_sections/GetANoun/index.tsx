@@ -33,22 +33,6 @@ export default function GetANoun() {
             className="h-[332px] w-[400px] object-cover"
           />
         </FeatureHighlightCard>
-        <FeatureHighlightCard
-          href="/convert?tab=redeem"
-          iconSrc="/feature/$nouns-redeem/icon.svg"
-          buttonLabel="Redeem"
-          description="Collect $NOUNS tokens and redeem them for a Noun."
-          className="gap-4 bg-blue-400 pb-8 text-white md:pb-10"
-        >
-          <Image
-            src="/feature/$nouns-redeem/main.png"
-            width={169}
-            height={212}
-            alt="Buy Secondary Nouns"
-            className="h-[212px] w-[169px] object-cover"
-          />
-          <p className="label-sm">1,000,000 $NOUNS = 1 Noun</p>
-        </FeatureHighlightCard>
       </div>
     </section>
   );

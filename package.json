@@ -36,7 +36,6 @@
     "@tanstack/react-table": "^8.20.5",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
-    "connectkit": "^1.9.1",
     "dotenv": "^16.4.5",
     "embla-carousel-autoplay": "^8.2.0",
     "embla-carousel-react": "^8.2.0",
@@ -65,7 +64,6 @@
     "usehooks-ts": "^3.1.0",
     "vaul": "^1.1.2",
     "viem": "^2.46.2",
-    "wagmi": "^2.19.5",
     "zod": "^3.24.1"
   },
   "pnpm": {

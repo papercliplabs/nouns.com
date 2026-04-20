@@ -1,7 +1,6 @@
 import { BigIntString } from "@/utils/types";
 import { Auction } from "./auction/types";
 import { Noun } from "./noun/types";
-import { ProposalVote } from "./ponder/governance/getProposal";
 import { safeFetch } from "@/utils/safeFetch";
 
 export function currentAuctionIdQuery() {
@@ -32,13 +31,3 @@ export function nogsQuery(nounId: string) {
   };
 }
 
-export function proposalVotesAfterTimestampQuery(
-  proposalId: number,
-  timestamp: number,
-) {
-  return {
-    queryKey: ["proposal-votes-after-timestamp", proposalId, timestamp],
-    queryFn: async () =>
-      await safeFetch<ProposalVote[]>(`/api/votes/${proposalId}/${timestamp}`),
-  };
-}

@@ -5,7 +5,6 @@ import NounsFundsIdeas from "./_sections/NounsFundsIdeas";
 import ThisIsNouns from "./_sections/ThisIsNouns";
 import GovernedByYou from "./_sections/GovernedByYou";
 import TheseAreNouns from "./_sections/TheseAreNouns";
-import AlreadyOwnANoun from "./_sections/AlreadyOwnANoun";
 import ByTheNumbers from "./_sections/ByTheNumbers";
 import Faq from "./_sections/Faq";
 import StartJourney from "./_sections/StartJourney";
@@ -56,7 +55,6 @@ export default async function Page(props: {
       <GovernedByYou />
       <TheseAreNouns />
       <GetANoun />
-      <AlreadyOwnANoun />
       <ByTheNumbers />
       <StartJourney />
       <LearnAboutNounsDao />

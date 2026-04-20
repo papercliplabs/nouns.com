@@ -1,20 +1,13 @@
 import Link from "next/link";
 import Image from "next/image";
 import { LinkExternal } from "./ui/link";
-import MailingListForm from "./MailingListForm";
 import { NounsDotComLogoLink } from "./NounsDotComLogoLink";
 
 const NAV_ITEMS: { name: string; href: string; external?: boolean }[][] = [
   [
     { name: "Explore", href: "/explore" },
     { name: "Stats", href: "/stats" },
-    { name: "Convert", href: "/convert" },
     { name: "$NOUNS", href: "/$nouns" },
-  ],
-  [
-    { name: "Bid", href: "/" },
-    { name: "Swap", href: "/explore?instantSwap=1" },
-    { name: "Trade", href: "/explore?onlyTreasuryNouns=1" },
   ],
   [
     {
@@ -45,13 +38,6 @@ export default function Footer() {
           <div className="flex items-center gap-3 paragraph-lg">
             <NounsDotComLogoLink darkMode />
             <span className="pt-[4px]">for Nouns DAO</span>
-          </div>
-          <div className="flex max-w-[448px] flex-col gap-5">
-            <span>
-              Join our mailing list to stay in the loop with our newest feature
-              releases and tips and tricks for navigating Nouns.com.
-            </span>
-            <MailingListForm />
           </div>
           <div className="flex gap-4">
             {SOCIALS.map((item) => (

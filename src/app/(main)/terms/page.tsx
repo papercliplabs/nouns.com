@@ -129,17 +129,13 @@ export default function TermsAndConditionsPage() {
           cryptoassets at all times.
         </p>
         <p>
-          To interact with the Protocol using the Interface, you will need to
-          connect and engage with it through your self-custodial wallet.
-          It&apos;s essential to understand that your self-custodial wallet is
-          provided by a third-party entity and is generally governed by separate
-          terms and conditions set by the respective third-party service
-          provider. These terms and conditions may involve additional fees,
-          disclaimers, or risk warnings regarding the accuracy and reliance on
-          the provided information. Reviewing and comprehending the terms and
-          conditions associated with your chosen self-custodial wallet provider
-          to ensure compliance and to be aware of any applicable charges or
-          risks is your sole responsibility.
+          The Interface is read-only and does not connect wallets or initiate
+          transactions. To interact with the Protocol (for example, to bid on
+          auctions or vote on proposals), you must use a separate interface
+          such as nouns.wtf together with your own self-custodial wallet. That
+          wallet and any third-party interface you use are governed by their
+          own terms; reviewing and complying with those terms is your sole
+          responsibility.
         </p>
         <p>
           Due to the non-custodial and decentralized nature of the technology,

@@ -4,26 +4,22 @@ import clsx from "clsx";
 import Image from "next/image";
 import { Noun, NounTraitType } from "@/data/noun/types";
 import { Separator } from "../ui/separator";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { CHAIN_CONFIG } from "@/config";
-import Link from "next/link";
-import { Button } from "../ui/button";
 import { Skeleton } from "../ui/skeleton";
 import { useNounImage } from "@/hooks/useNounImage";
-import Icon from "../ui/Icon";
 import { scrollToNounExplorer } from "@/utils/scroll";
 import { formatNumber } from "@/utils/format";
 import { Avatar, Name } from "@paperclip-labs/whisk-sdk/identity";
 import { LinkExternal } from "../ui/link";
 import { useQuery } from "@tanstack/react-query";
-import { currentAuctionIdQuery, nogsQuery } from "@/data/tanstackQueries";
+import { nogsQuery } from "@/data/tanstackQueries";
 import {
   DrawerDialog,
   DrawerDialogContent,
   DrawerDialogContentInner,
   DrawerDialogTitle,
 } from "../ui/DrawerDialog";
-import { isAddressEqual } from "viem";
 
 interface NounsDialogProps {
   nouns: Noun[];
@@ -38,10 +34,9 @@ export default function NounDialog({
   const [noun, setNoun] = useState<Noun | undefined>();
 
   useEffect(() => {
+    // Keep previous Noun when nounId clears so the exit animation can finish.
     if (nounId) {
       setNoun(nouns.find((noun) => noun.id === nounId));
-    } else {
-      // Latch the selected Noun so we can have a nice exit animation
     }
   }, [nouns, nounId]);
 
@@ -59,21 +54,6 @@ export default function NounDialog({
       window.history.pushState(null, "", `?${params.toString()}`);
     }
   }
-
-  const heldByTreasury = useMemo(
-    () => noun != null && isAddressEqual(noun.owner, CHAIN_CONFIG.addresses.nounsTreasury),
-    [noun],
-  );
-
-  const heldByNounsErc20 = useMemo(
-    () => noun != null && isAddressEqual(noun.owner, CHAIN_CONFIG.addresses.nounsErc20),
-    [noun],
-  );
-
-  const isAuctionNoun = useMemo(
-    () => noun != null && isAddressEqual(noun.owner, CHAIN_CONFIG.addresses.nounsAuctionHouseProxy),
-    [noun],
-  );
 
   if (!noun) {
     return null;
@@ -118,47 +98,6 @@ export default function NounDialog({
                 </div>
               </div>
             </LinkExternal>
-
-            {heldByTreasury && (
-              <>
-                <Link href={`/treasury-swap/${noun.id}`}>
-                  <Button className="w-full">Create a swap offer</Button>
-                </Link>
-                <div className="text-content-secondary">
-                  You can create a swap offer proposal for this Noun.
-                </div>
-              </>
-            )}
-
-            {heldByNounsErc20 && (
-              <>
-                <Link href={`/instant-swap/${noun.id}`}>
-                  <Button className="w-full gap-[10px]">
-                    <Icon icon="swap" size={20} className="fill-white" />
-                    Instant swap
-                  </Button>
-                </Link>
-                <div className="text-content-secondary">
-                  This Noun can be instantly swapped with any Noun you own. No
-                  need for a proposal because its held in the $nouns contract.
-                  Just swap it.
-                </div>
-              </>
-            )}
-
-            {isAuctionNoun && (
-              <>
-                <Link href="/">
-                  <Button className="w-full gap-[10px]">
-                    <Icon icon="bid" size={20} className="fill-white" />
-                    Bid
-                  </Button>
-                </Link>
-                <div className="text-content-secondary">
-                  This Noun is currently on auction. Bid now to win it!
-                </div>
-              </>
-            )}
 
             <Separator className="h-[2px]" />
 

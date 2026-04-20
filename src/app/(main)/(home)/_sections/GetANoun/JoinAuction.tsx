@@ -9,9 +9,9 @@ export default function JoinAuction() {
 
   return (
     <FeatureHighlightCard
-      href=""
+      href="https://nouns.wtf"
       iconSrc="/feature/bid/icon.svg"
-      buttonLabel="Bid"
+      buttonLabel="Bid on nouns.wtf"
       description="Bid on today's one-of-a-kind Noun and make it yours!"
       className={clsx(
         noun?.traits.background.seed == 1 ? "bg-nouns-warm" : "bg-nouns-cool",

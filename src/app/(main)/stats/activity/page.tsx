@@ -1,7 +1,6 @@
 import { Suspense } from "react";
 import { Skeleton } from "@/components/ui/skeleton";
 import ActivityStats from "./ActivityStats";
-import Link from "next/link";
 import ActivitySelector from "@/components/selectors/ActivitySelector";
 import { getActivity } from "@/data/ponder/activity/getActivity";
 import { getAllNouns } from "@/data/noun/getAllNouns";
@@ -24,13 +23,7 @@ export default function ActivityPage() {
       <div className="flex flex-col justify-between md:flex-row">
         <div>
           <h4>Activity</h4>
-          <div>
-            Activity around{" "}
-            <Link href="/convert" className="underline">
-              $nouns ERC-20
-            </Link>
-            .
-          </div>
+          <div>Activity around $nouns ERC-20.</div>
         </div>
         <div className="flex w-full justify-start gap-2 bg-white py-2 md:w-fit md:justify-end md:self-end md:py-0">
           <Suspense>
