@@ -1,10 +1,4 @@
-import {
-  Address,
-  BaseError,
-  InsufficientFundsError,
-  UserRejectedRequestError,
-} from "viem";
-import { SendTransactionErrorType } from "wagmi/actions";
+import { Address } from "viem";
 import {
   SECONDS_PER_DAY,
   SECONDS_PER_HOUR,
@@ -39,27 +33,6 @@ export function formatTimeLeft(seconds: number, compact?: boolean): string {
     }
   } else {
     return daysString + hoursString + minsString + secsString;
-  }
-}
-
-export function formatSendTransactionError(
-  error: SendTransactionErrorType | null,
-) {
-  if (error === null) return "";
-
-  if (error instanceof BaseError) {
-    if (error.walk((e) => e instanceof InsufficientFundsError)) {
-      return "Wallet has insufficient balance.";
-    } else if (
-      error.walk((e) => e instanceof UserRejectedRequestError) ||
-      error.details.includes("User rejected")
-    ) {
-      return "User rejected transaction request.";
-    } else {
-      return "Unknown error ocurred";
-    }
-  } else {
-    return "Unknown error ocurred";
   }
 }
 

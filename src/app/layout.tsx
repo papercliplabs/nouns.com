@@ -3,7 +3,7 @@ import localFont from "next/font/local";
 
 import Providers from "@/providers/providers";
 import ToastContainer from "@/components/ToastContainer";
-import TestnetBanner from "@/components/TestnetBanner";
+import ReadOnlyBanner from "@/components/ReadOnlyBanner";
 import Analytics from "@/components/Analytics";
 import type { Metadata, Viewport } from "next";
 
@@ -128,7 +128,7 @@ export default function RootLayout({
         />
         <Providers>
           <div className="flex min-h-screen flex-col justify-between border-border-primary">
-            <TestnetBanner />
+            <ReadOnlyBanner />
             {children}
           </div>
           <ToastContainer />

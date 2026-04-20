@@ -84,8 +84,7 @@ export default function NounCard({
                 </div>
               </TooltipTrigger>
               <TooltipContent>
-                This Noun is held by the treasury. <br />
-                You can create a swap offer for this Noun.
+                This Noun is held by the treasury.
               </TooltipContent>
             </Tooltip>
           )}
@@ -94,12 +93,10 @@ export default function NounCard({
               <TooltipTrigger className="absolute left-2 top-2 z-[6]" asChild>
                 <div className="flex items-center gap-1 rounded-full bg-white px-2 py-[5px] shadow-md">
                   <Icon icon="swap" size={size ? size / 10 : 20} />
-                  <span className="text-content-primary label-sm">Swap</span>
                 </div>
               </TooltipTrigger>
               <TooltipContent>
-                This Noun is held by the $nouns ERC-20 contract. It can be
-                instantly swapped with any Noun you own.
+                This Noun is held by the $nouns ERC-20 contract.
               </TooltipContent>
             </Tooltip>
           )}
@@ -111,13 +108,11 @@ export default function NounCard({
               >
                 <div className="flex items-center justify-center gap-[7px] rounded-full bg-background-dark py-2 pl-3 pr-4 shadow-md">
                   <div className="h-2 w-2 rounded-full bg-green-200 shadow-[0px_-1px_4px_0px_#26CB7E8C]" />
-                  Bid
+                  Live
                 </div>
               </TooltipTrigger>
               <TooltipContent>
-                This Noun is currently on auction.
-                <br />
-                You can create a bid to win it!
+                This Noun is currently on auction at nouns.wtf.
               </TooltipContent>
             </Tooltip>
           )}

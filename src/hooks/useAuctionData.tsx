@@ -8,7 +8,7 @@ import { useQuery } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
 
 export function useAuctionData() {
-  const { data: auctionId, refetch: refetchCurrentAuctionId } = useQuery({
+  const { data: auctionId } = useQuery({
     ...currentAuctionIdQuery(),
   });
 

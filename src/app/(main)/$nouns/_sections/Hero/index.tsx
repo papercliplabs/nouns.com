@@ -1,7 +1,6 @@
 import { Button } from "@/components/ui/button";
 import Icon from "@/components/ui/Icon";
 import { LinkExternal } from "@/components/ui/link";
-import Link from "next/link";
 import Background from "./Background";
 import AnimateIn from "@/components/AnimateIn";
 
@@ -36,14 +35,6 @@ export default function Hero() {
             <Icon icon="arrowUpRight" size={24} className="fill-white" />
           </Button>
         </LinkExternal>
-        <Link href="/convert">
-          <Button
-            variant="secondary"
-            className="h-[56px] rounded-full label-lg"
-          >
-            Convert Nouns
-          </Button>
-        </Link>
       </AnimateIn>
     </section>
   );

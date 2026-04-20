@@ -1,5 +1,4 @@
 import Link from "next/link";
-import WalletButton from "../WalletButton";
 import { CurrentAuctionSmall } from "../CurrentAuction";
 import HidingHeader from "./HidingHeader";
 import DesktopNav from "../Nav/DesktopNav";
@@ -28,7 +27,6 @@ export function Header() {
               <CurrentAuctionSmall />
             </CurrentAuctionPrefetchWrapper>
           </Link>
-          <WalletButton />
         </div>
       </div>
     </HidingHeader>

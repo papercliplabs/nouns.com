@@ -22,26 +22,18 @@ export default function PrivacyPolicyPage() {
       </p>
       <div>
         <h2>Personal Information We Collect</h2>
-        <p>We collect the following types of personal information:</p>
+        <p>
+          The Interface is a read-only informational site. We do not connect
+          wallets, prompt signatures, or initiate transactions — bidding and
+          voting are delegated to nouns.wtf. We collect the following types of
+          information:
+        </p>
         <ul className="inline-block list-inside list-disc pl-4 [&>li]:mb-[5px]">
           <li>
-            <b>Wallet Addresses:</b> Used for authentication, transaction
-            tracking, and interaction with the Interface.
-          </li>
-          <li>
-            <b>Email Addresses:</b> Provided for communication purposes, such as
-            updates, support, and announcements.
-          </li>
-          <li>
-            <b>Transaction Data:</b> Includes records of activity conducted via
-            the Interface.
-          </li>
-          <li>
-            <b>Payment and Transaction Information:</b> Cryptocurrency
-            transactions are facilitated through third-party wallet extensions
-            like MetaMask, Rainbow, and Coinbase. Your interactions with these
-            third-party services are governed by their respective privacy
-            policies.
+            <b>Publicly Available Onchain Data:</b> We read and display public
+            Ethereum data (Noun ownership, auction history, governance
+            activity) addressed by wallet address. We do not collect wallet
+            addresses from visitors.
           </li>
           <li>
             <b>Additional Information:</b> Any other information collected, not

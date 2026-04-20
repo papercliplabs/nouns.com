@@ -83,7 +83,7 @@ const CHAIN_SPECIFIC_CONFIGS: Record<number, ChainSpecificData> = {
     },
     nounsGovernanceUrl: "https://nouns.camp/",
     subgraphUrl: {
-      primary: `https://gateway-arbitrum.network.thegraph.com/api/${process.env.DECENTRALIZED_SUBGRAPH_API_KEY}/deployments/id/Qmdfajyi6PSmc45xWpbZoYdses84SAAze6ZcCxuDAhJFzt`,
+      primary: "https://api.goldsky.com/api/public/project_clnbcoajmebxn33wdbt98f439/subgraphs/nouns-mainnet/1.0.0/gn",
       fallback: `https://gateway-arbitrum.network.thegraph.com/api/${process.env.DECENTRALIZED_SUBGRAPH_API_KEY}/deployments/id/Qmdfajyi6PSmc45xWpbZoYdses84SAAze6ZcCxuDAhJFzt`,
     },
     ponderIndexerUrl: process.env.INDEXER_URL!,

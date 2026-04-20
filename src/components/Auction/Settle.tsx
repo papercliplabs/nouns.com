@@ -1,16 +1,12 @@
-"use client";
-import { useSettleCurrentAndCreateNew } from "@/hooks/transactions/useSettleCurrentAndCreateNew";
-import TransactionButton from "../TransactionButton";
+import { Button } from "../ui/button";
+import { LinkExternal } from "../ui/link";
 
 export default function Settle() {
-  const { settleCurrentAndCreateNew, error, state: txnState } = useSettleCurrentAndCreateNew();
-
   return (
-    <div className="flex w-full flex-col gap-1 md:max-w-[400px]">
-      <TransactionButton onClick={settleCurrentAndCreateNew} txnState={txnState}>
-        Start next auction
-      </TransactionButton>
-      {error && <div className="text-semantic-negative paragraph-sm">{error.message}</div>}
-    </div>
+    <Button asChild className="w-full md:w-[220px]">
+      <LinkExternal href="https://nouns.wtf">
+        <span className="label-md">Go to nouns.wtf</span>
+      </LinkExternal>
+    </Button>
   );
 }

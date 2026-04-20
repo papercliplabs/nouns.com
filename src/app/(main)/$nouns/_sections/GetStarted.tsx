@@ -28,37 +28,6 @@ export default function GetStarted() {
           <p className="label-sm">Swap on Matcha ↗</p>
         </FeatureHighlightCard>
         <FeatureHighlightCard
-          href="/convert?tab=deposit"
-          iconSrc="/feature/$nouns-convert/icon.svg"
-          buttonLabel="Convert"
-          description="Own a Noun? Convert it into $NOUNS to unlock liquidity."
-          className="bg-green-500 text-white"
-        >
-          <Image
-            src="/feature/$nouns-convert/main.png"
-            width={450}
-            height={332}
-            alt="Buy Secondary Nouns"
-            className="h-[332px] w-[450px] object-cover"
-          />
-        </FeatureHighlightCard>
-        <FeatureHighlightCard
-          href="/convert?tab=redeem"
-          iconSrc="/feature/$nouns-redeem/icon.svg"
-          buttonLabel="Redeem"
-          description="Collect $NOUNS tokens and redeem them for a Noun."
-          className="gap-4 bg-blue-400 pb-8 text-white md:pb-10"
-        >
-          <Image
-            src="/feature/$nouns-redeem/main.png"
-            width={169}
-            height={212}
-            alt="Buy Secondary Nouns"
-            className="h-[212px] w-[169px] object-cover"
-          />
-          <p className="label-sm">1,000,000 $NOUNS = 1 Noun</p>
-        </FeatureHighlightCard>
-        <FeatureHighlightCard
           href="https://app.uniswap.org/positions/create/v3?currencyA=0x0a93a7BE7e7e426fC046e204C44d6b03A302b631&currencyB=NATIVE&chain=base"
           iconSrc="/feature/$nouns-earn/icon.svg"
           buttonLabel="Earn"

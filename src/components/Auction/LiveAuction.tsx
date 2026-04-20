@@ -65,7 +65,7 @@ export function LiveAuction({
           }}
         />
       </div>
-      <Bid nounId={BigInt(auction.nounId)} nextMinBid={BigInt(auction.nextMinBid)} />
+      <Bid />
       {auction.bids.length > 0 && (
         <BidHistoryDialog nounId={auction.nounId} bids={auction.bids} clients={clients}>
           <span className="flex w-full whitespace-pre-wrap md:w-fit">

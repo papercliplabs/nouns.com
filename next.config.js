@@ -1,25 +1,12 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   webpack: (config) => {
-    config.externals.push("pino-pretty", "lokijs", "encoding");
+    config.externals.push("encoding");
     config.resolve.fallback = {
       ...config.resolve.fallback,
       fs: false,
-      "@react-native-async-storage/async-storage": false,
     };
-
-    // Fix for Coinbase Wallet SDK HeartbeatWorker module syntax issue
-    config.module.rules.push({
-      test: /HeartbeatWorker\.js$/,
-      type: 'javascript/esm',
-    });
-
     return config;
-  },
-  turbopack: {
-    resolveAlias: {
-      "@react-native-async-storage/async-storage": "./turbo-empty.ts",
-    },
   },
   reactStrictMode: false,
   logging: {
@@ -59,6 +46,16 @@ const nextConfig = {
       {
         source: "/vote/:id",
         destination: "https://nouns.wtf/vote/:id",
+        permanent: false,
+      },
+      {
+        source: "/convert",
+        destination: "/",
+        permanent: false,
+      },
+      {
+        source: "/proposals",
+        destination: "https://nouns.wtf/vote",
         permanent: false,
       },
     ];
