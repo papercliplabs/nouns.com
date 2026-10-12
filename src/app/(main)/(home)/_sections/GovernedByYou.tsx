@@ -1,7 +1,7 @@
 import Image from "next/image";
 import { Suspense } from "react";
 import { Skeleton } from "@/components/ui/skeleton";
-import { getAccountLeaderboard } from "@/data/ponder/leaderboard/getAccountLeaderboard";
+import { getAccountLeaderboard } from "@/data/indexer/getAccountLeaderboard";
 
 export default function GovernedByYou() {
   return (

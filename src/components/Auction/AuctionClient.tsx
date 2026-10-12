@@ -11,7 +11,7 @@ import {
 } from "@/data/tanstackQueries";
 import { LiveAuction } from "./LiveAuction";
 import { EndedAuction } from "./EndedAuction";
-import { Client } from "@/data/ponder/client/getClients";
+import { Client } from "@/data/indexer/getClients";
 import { NounImageBase } from "../NounImage";
 import { Skeleton } from "../ui/skeleton";
 import { AuctionDetailTemplate } from "./AuctionDetailsTemplate";
@@ -39,7 +39,7 @@ export default function AuctionClient({ clients }: { clients: Client[] }) {
   const { data: auction } = useQuery({
     ...auctionQuery(auctionId),
     enabled: !!auctionId,
-    refetchInterval: auctionId == currentAuctionId ? 1000 : undefined, // 1 sec
+    refetchInterval: auctionId == currentAuctionId ? 30 * 1000 : undefined, // Matches the server cache
   });
 
   const { data: noun } = useQuery({

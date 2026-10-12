@@ -1,6 +1,6 @@
 import TitlePopover from "@/components/TitlePopover";
 import Card from "@/components/ui/card";
-import { getAccountLeaderboard } from "@/data/ponder/leaderboard/getAccountLeaderboard";
+import { getAccountLeaderboard } from "@/data/indexer/getAccountLeaderboard";
 import { formatNumber } from "@/utils/format";
 import { formatUnits, getAddress } from "viem";
 import {

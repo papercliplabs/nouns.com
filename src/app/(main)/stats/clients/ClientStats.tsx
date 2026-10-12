@@ -1,5 +1,5 @@
 "use client";
-import { Client } from "@/data/ponder/client/getClients";
+import { Client } from "@/data/indexer/getClients";
 import {
   ColumnDef,
   SortingState,

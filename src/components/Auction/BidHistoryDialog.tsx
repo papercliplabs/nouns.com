@@ -9,7 +9,7 @@ import { ReactNode } from "react";
 import { LinkExternal } from "../ui/link";
 import { CHAIN_CONFIG } from "@/config";
 import { formatNumber } from "@/utils/format";
-import { Client } from "@/data/ponder/client/getClients";
+import { Client } from "@/data/indexer/getClients";
 import Image from "next/image";
 import { Avatar, Name } from "@paperclip-labs/whisk-sdk/identity";
 import {

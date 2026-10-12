@@ -11,7 +11,7 @@ import { Tooltip, TooltipContent, TooltipTrigger } from "../ui/tooltip";
 import Icon from "../ui/Icon";
 import { mainnet } from "viem/chains";
 import { BidHistoryDialog } from "./BidHistoryDialog";
-import { Client } from "@/data/ponder/client/getClients";
+import { Client } from "@/data/indexer/getClients";
 import Image from "next/image";
 import { Avatar, Name } from "@paperclip-labs/whisk-sdk/identity";
 

@@ -2,8 +2,7 @@ import AnimateIn from "@/components/AnimateIn";
 import DataMetric from "@/components/DataMetric";
 import { CHAIN_CONFIG } from "@/config";
 import { getAllNouns } from "@/data/noun/getAllNouns";
-import { getNounsErc20VolumeUsd } from "@/data/ponder/$nouns/getNounsErc20VolumeUsd";
-import { getUniqueNounsErc20HolderCount } from "@/data/ponder/$nouns/getUniqueNounsErc20HolderCount";
+import { getNounsErc20VolumeUsd } from "@/data/indexer/getNounsErc20Stats";
 import { Suspense } from "react";
 import { formatUnits, isAddressEqual } from "viem";
 
@@ -22,9 +21,8 @@ export default function Stats() {
 }
 
 async function DataWrapper() {
-  const [allNouns, uniqueOwners, volumeUsd30d] = await Promise.all([
+  const [allNouns, volumeUsd30d] = await Promise.all([
     getAllNouns(),
-    getUniqueNounsErc20HolderCount(),
     getNounsErc20VolumeUsd(),
   ]);
   const nounsInErc20Contract = allNouns.filter((noun) =>
@@ -37,7 +35,6 @@ async function DataWrapper() {
         label="In Circulation"
         value={nounsInErc20Contract.length * $NOUNS_PER_NOUN}
       />
-      <DataMetric label="Unique Owners" value={uniqueOwners} />
       <DataMetric
         label="Volume USD (30d)"
         value={volumeUsd30d}

@@ -1,5 +1,4 @@
 import { getNounData } from "@/utils/nounImages/nounImage";
-import { AllNounsQuery } from "../generated/gql/graphql";
 import { Noun } from "./types";
 import { getAddress } from "viem";
 
@@ -7,14 +6,16 @@ function extractNameFromFileName(filename: string) {
   return filename.substring(filename.indexOf("-") + 1);
 }
 
-// Async just so we can cache
-export function transformQueryNounToNoun(
-  queryNoun: AllNounsQuery["nouns"][0],
-): Noun {
-  if (!queryNoun.seed) {
-    throw new Error("Seed not found");
-  }
+export interface IndexerNoun {
+  id: string;
+  owner: string;
+  seed: Record<
+    "background" | "body" | "accessory" | "head" | "glasses",
+    string | number | bigint
+  >;
+}
 
+export function transformQueryNounToNoun(queryNoun: IndexerNoun): Noun {
   const seed = {
     background: Number(queryNoun.seed.background),
     body: Number(queryNoun.seed.body),
@@ -28,11 +29,11 @@ export function transformQueryNounToNoun(
 
   return {
     id: queryNoun.id,
-    owner: getAddress(queryNoun.owner.id),
+    owner: getAddress(queryNoun.owner),
     traits: {
       background: {
         seed: seed.background,
-        name: queryNoun.seed.background == "0" ? "Cool" : "Warm",
+        name: seed.background == 0 ? "Cool" : "Warm",
       },
       body: {
         seed: seed.body,

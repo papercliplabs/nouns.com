@@ -16,6 +16,9 @@ interface TreasurySummary {
 async function getTreasurySummaryUncached(): Promise<TreasurySummary> {
   const data = await getDailyFinancialSnapshots();
   const lastEntry = data[data.length - 1];
+  if (!lastEntry) {
+    throw new Error("getTreasurySummary: no data"); // Don't cache a failed read
+  }
 
   const treasuryBalanceInEth = lastEntry.treasuryBalanceInEth;
   const treasuryBalanceInUsd = lastEntry.treasuryBalanceInUsd;
@@ -42,8 +45,17 @@ async function getTreasurySummaryUncached(): Promise<TreasurySummary> {
   };
 }
 
-export const getTreasurySummary = unstable_cache(
+const getTreasurySummaryCached = unstable_cache(
   getTreasurySummaryUncached,
   ["get-treasury-summary"],
   { revalidate: SECONDS_PER_DAY / 2 },
 );
+
+export async function getTreasurySummary(): Promise<
+  TreasurySummary | undefined
+> {
+  return getTreasurySummaryCached().catch((e) => {
+    console.error(e);
+    return undefined;
+  });
+}

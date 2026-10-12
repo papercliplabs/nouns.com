@@ -2,7 +2,7 @@ import { Suspense } from "react";
 import { Skeleton } from "@/components/ui/skeleton";
 import ActivityStats from "./ActivityStats";
 import ActivitySelector from "@/components/selectors/ActivitySelector";
-import { getActivity } from "@/data/ponder/activity/getActivity";
+import { getActivity } from "@/data/indexer/getActivity";
 import { getAllNouns } from "@/data/noun/getAllNouns";
 import { readContract } from "viem/actions";
 import { CHAIN_CONFIG } from "@/config";
