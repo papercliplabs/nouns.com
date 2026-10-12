@@ -39,7 +39,7 @@ export default function AuctionClient({ clients }: { clients: Client[] }) {
   const { data: auction } = useQuery({
     ...auctionQuery(auctionId),
     enabled: !!auctionId,
-    refetchInterval: auctionId == currentAuctionId ? 1000 : undefined, // 1 sec
+    refetchInterval: auctionId == currentAuctionId ? 30 * 1000 : undefined, // Matches the server cache
   });
 
   const { data: noun } = useQuery({

@@ -4,7 +4,7 @@ import { Auction, Bid } from "./types";
 import { Hex, getAddress } from "viem";
 import { getProtocolParams } from "../protocol/getProtocolParams";
 import { bigIntMax } from "@/utils/bigint";
-import { revalidateTag, unstable_cache } from "next/cache";
+import { unstable_cache } from "next/cache";
 import { indexerQuery, toUnixSeconds } from "../indexer/client";
 import { getAuctionFromChain } from "./getAuctionFromChain";
 
@@ -161,21 +161,34 @@ async function getAuctionByIdUncached(
   } as Auction;
 }
 
-const getAuctionByIdCached = unstable_cache(
+// The live auction (and one settled since the indexer last polled) is read from the chain, so it's cached briefly to
+// keep RPC usage flat no matter how many people are watching
+const LIVE_AUCTION_REVALIDATE_S = 30;
+
+const getAuctionByIdShortCached = unstable_cache(
   getAuctionByIdUncached,
-  ["get-auction-by-id"],
-  {
-    tags: ["get-auction-by-id"],
-  },
+  ["get-auction-by-id-short"],
+  { revalidate: LIVE_AUCTION_REVALIDATE_S },
 );
 
-export async function getAuctionById(id: BigIntString) {
-  const cachedAuction = await getAuctionByIdCached(id);
+// Settled auctions never change, so they're cached forever. Throws for anything not settled yet so it isn't cached.
+const getSettledAuctionByIdCached = unstable_cache(
+  async (id: BigIntString) => {
+    const auction = await getAuctionByIdShortCached(id);
+    if (auction?.state != "ended-settled") {
+      throw new Error("Auction not settled yet");
+    }
+    return auction;
+  },
+  ["get-settled-auction-by-id"],
+);
 
-  if (cachedAuction?.state != "ended-settled") {
-    revalidateTag("get-auction-by-id");
-    return await getAuctionByIdCached(id);
+export async function getAuctionById(
+  id: BigIntString,
+): Promise<Auction | undefined> {
+  try {
+    return await getSettledAuctionByIdCached(id);
+  } catch {
+    return await getAuctionByIdShortCached(id);
   }
-
-  return cachedAuction;
 }

@@ -22,5 +22,5 @@ async function getCurrentAuctionNounIdUncached(): Promise<BigIntString> {
 export const getCurrentAuctionNounId = unstable_cache(
   getCurrentAuctionNounIdUncached,
   ["get-current-auction-noun-id", CHAIN_CONFIG.chain.id.toString()],
-  { revalidate: 2 },
+  { revalidate: 30 }, // No bidding in the app, so the next auction showing up within 30s is fine
 );

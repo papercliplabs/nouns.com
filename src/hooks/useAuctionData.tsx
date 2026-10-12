@@ -15,7 +15,7 @@ export function useAuctionData() {
   const { data: auction } = useQuery({
     ...auctionQuery(auctionId ?? undefined),
     enabled: !!auctionId,
-    refetchInterval: 1000,
+    refetchInterval: 30 * 1000, // Matches the server cache
   });
 
   const { data: noun } = useQuery({
