@@ -18,7 +18,7 @@ async function getNounsErc20VolumeUsdUncached() {
     `filter: { blockTimestamp: { greaterThan: "${since}" }, from: { notEqualTo: "${zeroAddress}" }, to: { notEqualTo: "${zeroAddress}" } }`,
   );
   if (!transfers) {
-    return 0;
+    throw new Error("getNounsErc20VolumeUsd: indexer query failed"); // Don't cache a failed read
   }
 
   const totalVolume = transfers.reduce(
@@ -45,10 +45,17 @@ async function getNounsErc20VolumeUsdUncached() {
   );
 }
 
-export const getNounsErc20VolumeUsd = unstable_cache(
+const getNounsErc20VolumeUsdCached = unstable_cache(
   getNounsErc20VolumeUsdUncached,
   ["get-nouns-erc20-volume-usd"],
   {
     revalidate: SECONDS_PER_DAY,
   },
 );
+
+export async function getNounsErc20VolumeUsd(): Promise<number> {
+  return getNounsErc20VolumeUsdCached().catch((e) => {
+    console.error(e);
+    return 0;
+  });
+}

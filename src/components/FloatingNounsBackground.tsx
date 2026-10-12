@@ -28,10 +28,12 @@ export function FloatingNounsBackground({
   useEffect(() => {
     // Generate the random nouns once on the client
     setRandomNouns(
-      Array.from(
-        { length: 22 },
-        () => nouns[Math.floor(Math.random() * nouns.length)],
-      ),
+      nouns.length == 0
+        ? [] // Nouns failed to load
+        : Array.from(
+            { length: 22 },
+            () => nouns[Math.floor(Math.random() * nouns.length)],
+          ),
     );
   }, [nouns]);
 

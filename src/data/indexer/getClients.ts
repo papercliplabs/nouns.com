@@ -88,7 +88,7 @@ async function getClientsUncached(): Promise<Client[]> {
     !proposals ||
     !votes
   ) {
-    return [];
+    throw new Error("getClients: indexer query failed"); // Don't cache a failed read
   }
 
   const byId = <T extends { clientId: number }>(rows: T[]) =>
@@ -132,9 +132,16 @@ async function getClientsUncached(): Promise<Client[]> {
     .sort((a, b) => a.id - b.id);
 }
 
-export const getClients = unstable_cache(getClientsUncached, ["get-clients"], {
+const getClientsCached = unstable_cache(getClientsUncached, ["get-clients"], {
   revalidate: SECONDS_PER_DAY / 2,
 });
+
+export async function getClients(): Promise<Client[]> {
+  return getClientsCached().catch((e) => {
+    console.error(e);
+    return [];
+  });
+}
 
 export async function getClientForId(id: number): Promise<Client | undefined> {
   const clients = await getClients();

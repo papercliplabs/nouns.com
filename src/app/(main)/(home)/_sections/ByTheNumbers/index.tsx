@@ -41,7 +41,7 @@ async function ByTheNumbersDataWrapper() {
       nounsCreated={Number(currentAuctionId) + 1}
       nounOwners={leaderboard?.length ?? 0}
       ideasFunded={ideasFunded}
-      treasuryDeployedUsd={treasurySummary.propSpendInUsd}
+      treasuryDeployedUsd={treasurySummary?.propSpendInUsd ?? 0}
     />
   );
 }

@@ -33,13 +33,18 @@ const EXCLUDED_PROPOSAL_IDS = [
   "359",
 ];
 const NOUNS_TOKEN_BUYER: Address = "0x4f2aCdc74f6941390d9b1804faBc3E780388cfe5";
+const EXECUTORS: Address[] = [
+  "0xb1a32FC9F9D8b2cf86C068Cae13108809547ef71", // Executor
+  "0x0BC3807Ec262cB779b38D65b38158acC3bfedE10", // Executor (v1)
+];
 // Staked ETH is counted in the treasury balance, and the executors are the treasury
 const TREASURY_ASSET_TARGETS: Address[] = [
   "0xae7ab96520DE3A18E5e111B5EaAb095312D7fE84", // stETH (Lido submit)
   "0xe3cBd06D7dadB3F4e6557bAb7EdD924CD1489E8f", // Mantle staking (mints mETH)
-  "0xb1a32FC9F9D8b2cf86C068Cae13108809547ef71", // Executor
-  "0x0BC3807Ec262cB779b38D65b38158acC3bfedE10", // Executor (v1)
+  ...EXECUTORS,
 ];
+const isOneOf = (address: string, addresses: Address[]) =>
+  addresses.some((a) => isAddressEqual(address as Address, a));
 
 type PaymentNode = { value: string; txHash: string; blockTimestamp: string };
 
@@ -61,7 +66,10 @@ export async function getDailyFinancialSnapshots(): Promise<
     usdcPayouts,
     registeredDebts,
   ] = await Promise.all([
-    getTreasuryBalanceHistory(),
+    getTreasuryBalanceHistory().catch((e) => {
+      console.error(e);
+      return [];
+    }),
     indexerQueryAll<{ amount: string; endTime: string }>(
       "allAuctions",
       "amount endTime",
@@ -76,9 +84,9 @@ export async function getDailyFinancialSnapshots(): Promise<
       "target value txHash blockTimestamp",
       `filter: { value: { notEqualTo: "0" } }`,
     ),
-    indexerQueryAll<PaymentNode>(
+    indexerQueryAll<PaymentNode & { to: string }>(
       "allPayerUsdcTransfers",
-      "value txHash blockTimestamp",
+      "to value txHash blockTimestamp",
     ),
     indexerQueryAll<PaymentNode>(
       "allRegisteredDebts",
@@ -128,9 +136,7 @@ export async function getDailyFinancialSnapshots(): Promise<
   for (const transfer of ethTransfers) {
     if (
       isSpend(transfer) &&
-      ![NOUNS_TOKEN_BUYER, ...TREASURY_ASSET_TARGETS].some((address) =>
-        isAddressEqual(transfer.target as Address, address),
-      )
+      !isOneOf(transfer.target, [NOUNS_TOKEN_BUYER, ...TREASURY_ASSET_TARGETS])
     ) {
       addTo(
         spendEthByDay,
@@ -139,7 +145,9 @@ export async function getDailyFinancialSnapshots(): Promise<
       );
     }
   }
-  for (const payment of [...usdcPayouts, ...registeredDebts]) {
+  // USDC the payer sends back to the treasury (withdrawPaymentToken) isn't spend
+  const usdcPaidOut = usdcPayouts.filter(({ to }) => !isOneOf(to, EXECUTORS));
+  for (const payment of [...usdcPaidOut, ...registeredDebts]) {
     if (isSpend(payment)) {
       addTo(
         spendUsdByDay,

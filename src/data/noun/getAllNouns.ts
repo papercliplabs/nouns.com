@@ -26,7 +26,7 @@ async function runPaginatedNounsQueryUncached(): Promise<IndexerNoun[]> {
     ),
   ]);
   if (!owners || !seeds) {
-    return [];
+    throw new Error("getAllNouns: indexer query failed"); // Don't cache a failed read
   }
 
   const seedById = new Map(seeds.map((seed) => [seed.tokenId, seed]));
@@ -46,7 +46,10 @@ const runPaginatedNounsQuery = unstable_cache(
 );
 
 export async function getAllNounsUncached(): Promise<Noun[]> {
-  const queryResponse = await runPaginatedNounsQueryUncached();
+  const queryResponse = await runPaginatedNounsQueryUncached().catch((e) => {
+    console.error(e);
+    return [];
+  });
   const nouns = queryResponse.map(transformQueryNounToNoun);
 
   // Sort by id, descending
@@ -56,7 +59,10 @@ export async function getAllNounsUncached(): Promise<Noun[]> {
 }
 
 export async function getAllNouns(): Promise<Noun[]> {
-  const queryResponse = await runPaginatedNounsQuery();
+  const queryResponse = await runPaginatedNounsQuery().catch((e) => {
+    console.error(e);
+    return [];
+  });
   const nouns = queryResponse.map(transformQueryNounToNoun);
 
   // Sort by id, descending
