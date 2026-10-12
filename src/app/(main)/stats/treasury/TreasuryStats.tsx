@@ -1,7 +1,7 @@
 "use client";
 import Card from "@/components/ui/card";
 import TimeSeriesChart from "@/components/Chart/TimeSeriesChart";
-import { getDailyFinancialSnapshots } from "@/data/ponder/financial/getDailyFinancialSnapshots";
+import { getDailyFinancialSnapshots } from "@/data/indexer/getDailyFinancialSnapshots";
 import { computePercentDifference } from "@/utils/postProcessing";
 import { useCurrencySelector } from "@/components/selectors/CurrencySelector";
 import {

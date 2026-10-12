@@ -7,7 +7,7 @@ import Icon from "@/components/ui/Icon";
 import { LinkExternal } from "@/components/ui/link";
 import { CHAIN_CONFIG } from "@/config";
 import { Noun } from "@/data/noun/types";
-import { ActivityEntry } from "@/data/ponder/activity/getActivity";
+import { ActivityEntry } from "@/data/indexer/getActivity";
 import { useNounImage } from "@/hooks/useNounImage";
 import { formatNumber, formatTimeSinceNow } from "@/utils/format";
 import Image from "next/image";

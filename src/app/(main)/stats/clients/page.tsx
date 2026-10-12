@@ -1,7 +1,7 @@
 import { LinkExternal } from "@/components/ui/link";
 import { Suspense } from "react";
 import { Skeleton } from "@/components/ui/skeleton";
-import { getClients } from "@/data/ponder/client/getClients";
+import { getClients } from "@/data/indexer/getClients";
 import ClientStats from "./ClientStats";
 import { Metadata } from "next";
 import IndexerIssues from "@/components/IndexerIssues";

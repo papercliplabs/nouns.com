@@ -2,7 +2,7 @@ import { LinkExternal } from "@/components/ui/link";
 import { CHAIN_CONFIG } from "@/config";
 import TimeSelector from "@/components/selectors/TimeSelector";
 import CurrencySelector from "@/components/selectors/CurrencySelector";
-import { getDailyFinancialSnapshots } from "@/data/ponder/financial/getDailyFinancialSnapshots";
+import { getDailyFinancialSnapshots } from "@/data/indexer/getDailyFinancialSnapshots";
 import { Suspense } from "react";
 import { Skeleton } from "@/components/ui/skeleton";
 import TreasuryStats from "./TreasuryStats";

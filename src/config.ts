@@ -32,11 +32,7 @@ export interface ChainSpecificData {
     stEth: Address;
   };
   nounsGovernanceUrl: string;
-  subgraphUrl: {
-    primary: string;
-    fallback: string;
-  };
-  ponderIndexerUrl: string;
+  indexerUrl: string;
   swapForWrappedNativeUrl: string;
 }
 
@@ -82,11 +78,7 @@ const CHAIN_SPECIFIC_CONFIGS: Record<number, ChainSpecificData> = {
       stEth: getAddress("0xae7ab96520DE3A18E5e111B5EaAb095312D7fE84"),
     },
     nounsGovernanceUrl: "https://nouns.camp/",
-    subgraphUrl: {
-      primary: "https://api.goldsky.com/api/public/project_clnbcoajmebxn33wdbt98f439/subgraphs/nouns-mainnet/1.0.0/gn",
-      fallback: `https://gateway-arbitrum.network.thegraph.com/api/${process.env.DECENTRALIZED_SUBGRAPH_API_KEY}/deployments/id/Qmdfajyi6PSmc45xWpbZoYdses84SAAze6ZcCxuDAhJFzt`,
-    },
-    ponderIndexerUrl: process.env.INDEXER_URL!,
+    indexerUrl: process.env.INDEXER_URL!, // rindexer GraphQL endpoint, mainnet only
     swapForWrappedNativeUrl:
       "https://app.uniswap.org/swap?outputCurrency=0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2&chain=mainnet",
   },
@@ -129,11 +121,7 @@ const CHAIN_SPECIFIC_CONFIGS: Record<number, ChainSpecificData> = {
       stEth: getAddress("0xae7ab96520DE3A18E5e111B5EaAb095312D7fE84"), // TODO: update
     },
     nounsGovernanceUrl: "https://sepolia.nouns.camp/",
-    subgraphUrl: {
-      primary: `https://gateway-arbitrum.network.thegraph.com/api/${process.env.DECENTRALIZED_SUBGRAPH_API_KEY}/deployments/id/QmZNg1ngfNLpYxVQGCqbxWhqNLsiup3oSGbWpkF8tERVa6`,
-      fallback: `https://gateway-arbitrum.network.thegraph.com/api/${process.env.DECENTRALIZED_SUBGRAPH_API_KEY}/deployments/id/QmZNg1ngfNLpYxVQGCqbxWhqNLsiup3oSGbWpkF8tERVa6`,
-    },
-    ponderIndexerUrl: process.env.INDEXER_URL!, // mainnet for now, didn't deploy for sepolia yet, don't use for testnet but this satisfies codegen
+    indexerUrl: process.env.INDEXER_URL!,
     swapForWrappedNativeUrl: "",
   },
 };

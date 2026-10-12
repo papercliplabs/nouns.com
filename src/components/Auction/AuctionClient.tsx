@@ -11,7 +11,7 @@ import {
 } from "@/data/tanstackQueries";
 import { LiveAuction } from "./LiveAuction";
 import { EndedAuction } from "./EndedAuction";
-import { Client } from "@/data/ponder/client/getClients";
+import { Client } from "@/data/indexer/getClients";
 import { NounImageBase } from "../NounImage";
 import { Skeleton } from "../ui/skeleton";
 import { AuctionDetailTemplate } from "./AuctionDetailsTemplate";

@@ -2,8 +2,7 @@ import AnimateIn from "@/components/AnimateIn";
 import DataMetric from "@/components/DataMetric";
 import { CHAIN_CONFIG } from "@/config";
 import { getAllNouns } from "@/data/noun/getAllNouns";
-import { getNounsErc20VolumeUsd } from "@/data/ponder/$nouns/getNounsErc20VolumeUsd";
-import { getUniqueNounsErc20HolderCount } from "@/data/ponder/$nouns/getUniqueNounsErc20HolderCount";
+import { getNounsErc20VolumeUsd, getUniqueNounsErc20HolderCount } from "@/data/indexer/getNounsErc20Stats";
 import { Suspense } from "react";
 import { formatUnits, isAddressEqual } from "viem";
 

@@ -1,6 +1,6 @@
 import { Suspense } from "react";
 import LeaderboardStats from "./LeaderboardStats";
-import { getAccountLeaderboard } from "@/data/ponder/leaderboard/getAccountLeaderboard";
+import { getAccountLeaderboard } from "@/data/indexer/getAccountLeaderboard";
 import { getCurrentAuctionNounId } from "@/data/auction/getCurrentAuctionNounId";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Metadata } from "next";

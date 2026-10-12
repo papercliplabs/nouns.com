@@ -8,7 +8,7 @@ import { formatNumber } from "@/utils/format";
 import { AuctionDetailTemplate } from "./AuctionDetailsTemplate";
 import { Auction } from "@/data/auction/types";
 import { BidHistoryDialog } from "./BidHistoryDialog";
-import { Client } from "@/data/ponder/client/getClients";
+import { Client } from "@/data/indexer/getClients";
 import { Name } from "@paperclip-labs/whisk-sdk/identity";
 
 export function LiveAuction({

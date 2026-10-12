@@ -14,7 +14,7 @@ import {
 } from "@/data/tanstackQueries";
 import { getAuctionById } from "@/data/auction/getAuctionById";
 import { getNounByIdUncached } from "@/data/noun/getNounById";
-import { getClients } from "@/data/ponder/client/getClients";
+import { getClients } from "@/data/indexer/getClients";
 
 export default async function Auction({
   initialAuctionId,
