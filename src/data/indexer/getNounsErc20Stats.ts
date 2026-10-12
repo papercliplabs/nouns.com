@@ -5,7 +5,7 @@ import { getAuctionById } from "@/data/auction/getAuctionById";
 import { formatEther, formatUnits, zeroAddress } from "viem";
 import { getEthPriceUsd } from "@/data/tokens/getEthPriceUsd";
 import { unstable_cache } from "next/cache";
-import { indexerQuery, indexerQueryAll } from "./client";
+import { indexerQueryAll } from "./client";
 
 // Wallet-to-wallet $nouns transfer volume (mints and burns excluded) over the last 30 days, in USD
 async function getNounsErc20VolumeUsdUncached() {
@@ -52,13 +52,3 @@ export const getNounsErc20VolumeUsd = unstable_cache(
     revalidate: SECONDS_PER_DAY,
   },
 );
-
-export async function getUniqueNounsErc20HolderCount(): Promise<number> {
-  const data = await indexerQuery<{ allErc20Holders: { totalCount: number } }>(
-    `{ allErc20Holders(filter: { balance: { greaterThan: "0" } }) { totalCount } }`,
-    undefined,
-    { next: { revalidate: SECONDS_PER_DAY } },
-  );
-
-  return data?.allErc20Holders.totalCount ?? 0;
-}
