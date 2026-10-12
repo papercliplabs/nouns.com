@@ -4,7 +4,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { getAllNounsUncached } from "@/data/noun/getAllNouns";
 import NounExplorer from "@/components/NounExplorer";
 import AnimationGird from "@/components/NounExplorer/NounGrid/AnimationGrid";
-import { getFrameMetadata } from "frog/next";
+import { getFrameMetadata } from "@/utils/getFrameMetadata";
 
 export async function generateMetadata(props: {
   searchParams: Promise<{ nounId?: string }>;

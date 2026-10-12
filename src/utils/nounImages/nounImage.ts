@@ -1,5 +1,5 @@
 import { Noun, NounTraitType } from "@/data/noun/types";
-import { buildSVG } from "@nouns/sdk";
+import { buildSVG } from "./svgBuilder";
 import { imageData } from "./imageData";
 
 const { palette, bgcolors } = imageData;

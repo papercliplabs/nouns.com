@@ -13,6 +13,12 @@ const config: CodegenConfig = {
       plugins: [],
       config: {
         documentMode: "string",
+        scalars: {
+          DateTime: "string",
+          EmailAddress: "string",
+          JSON: "any",
+          JSONObject: "any",
+        },
       },
     },
   },
