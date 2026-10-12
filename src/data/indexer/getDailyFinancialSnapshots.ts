@@ -20,8 +20,8 @@ export interface DailyFinancialSnapshot {
   propSpendInEth: number;
 }
 
-// Matches what the old Ponder indexer counted as prop spend: ETH and USDC paid out by executed proposals, except
-// ETH sent to the token buyer (it buys Nouns back), and except these proposals (staking ETH and the DAO migration)
+// Prop spend: ETH and USDC paid out by executed proposals, except ETH sent to the token buyer (it buys Nouns back),
+// except ETH that stays in the treasury as another asset, and except these proposals (staking ETH and the DAO migration)
 const EXCLUDED_PROPOSAL_IDS = [
   "22",
   "30",
@@ -33,6 +33,13 @@ const EXCLUDED_PROPOSAL_IDS = [
   "359",
 ];
 const NOUNS_TOKEN_BUYER: Address = "0x4f2aCdc74f6941390d9b1804faBc3E780388cfe5";
+// Staked ETH is counted in the treasury balance, and the executors are the treasury
+const TREASURY_ASSET_TARGETS: Address[] = [
+  "0xae7ab96520DE3A18E5e111B5EaAb095312D7fE84", // stETH (Lido submit)
+  "0xe3cBd06D7dadB3F4e6557bAb7EdD924CD1489E8f", // Mantle staking (mints mETH)
+  "0xb1a32FC9F9D8b2cf86C068Cae13108809547ef71", // Executor
+  "0x0BC3807Ec262cB779b38D65b38158acC3bfedE10", // Executor (v1)
+];
 
 type PaymentNode = { value: string; txHash: string; blockTimestamp: string };
 
@@ -121,7 +128,9 @@ export async function getDailyFinancialSnapshots(): Promise<
   for (const transfer of ethTransfers) {
     if (
       isSpend(transfer) &&
-      !isAddressEqual(transfer.target as Address, NOUNS_TOKEN_BUYER)
+      ![NOUNS_TOKEN_BUYER, ...TREASURY_ASSET_TARGETS].some((address) =>
+        isAddressEqual(transfer.target as Address, address),
+      )
     ) {
       addTo(
         spendEthByDay,

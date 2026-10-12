@@ -28,6 +28,9 @@ const ETH_LIKE_TOKENS: Address[] = [
   "0x7f39C581F595B53c5cb19bD0b3f8dA6c935E2Ca0", // wstETH
   "0xae78736cd615f374d3085123a210448e74fc6393", // rETH
 ];
+// Priced from Mantle's exchange rate: the lens is too expensive for mETH at old blocks and fails the whole read
+const METH: Address = "0xd5F7838F5C461fefF7FE49ea5ebaF7728bB0ADfa";
+const MANTLE_STAKING: Address = "0xe3cBd06D7dadB3F4e6557bAb7EdD924CD1489E8f";
 
 const multicallV1Abi = parseAbi([
   "function getEthBalance(address) view returns (uint256)",
@@ -35,6 +38,9 @@ const multicallV1Abi = parseAbi([
 ]);
 const lensOracleAbi = parseAbi([
   "function getPriceUsdcRecommended(address) view returns (uint256)",
+]);
+const mantleStakingAbi = parseAbi([
+  "function mETHToETH(uint256) view returns (uint256)",
 ]);
 
 export interface TreasuryBalancePoint {
@@ -58,7 +64,7 @@ async function getTreasuryBalanceAtBlock(
       functionName: "getEthBalance",
       args: [executor],
     })),
-    ...[...ETH_LIKE_TOKENS, USDC].flatMap((token) =>
+    ...[...ETH_LIKE_TOKENS, USDC, METH].flatMap((token) =>
       EXECUTORS.map((executor) => ({
         address: token,
         abi: erc20Abi,
@@ -72,6 +78,12 @@ async function getTreasuryBalanceAtBlock(
       functionName: "getPriceUsdcRecommended",
       args: [token],
     })),
+    {
+      address: MANTLE_STAKING,
+      abi: mantleStakingAbi,
+      functionName: "mETHToETH",
+      args: [BigInt(1e18)],
+    },
   ];
 
   // Deployless so it works at blocks before Multicall3 existed; a token that didn't exist yet just fails (balance 0)
@@ -92,10 +104,11 @@ async function getTreasuryBalanceAtBlock(
   let i = 0;
   const timestamp = Number(values[i++]);
   const ethBalance = EXECUTORS.reduce((acc) => acc + values[i++], BigInt(0));
-  const tokenBalances = [...ETH_LIKE_TOKENS, USDC].map(() =>
+  const tokenBalances = [...ETH_LIKE_TOKENS, USDC, METH].map(() =>
     EXECUTORS.reduce((acc) => acc + values[i++], BigInt(0)),
   );
   const prices = ETH_LIKE_TOKENS.map(() => Number(formatUnits(values[i++], 6)));
+  const methToEth = Number(formatUnits(values[i++], 18));
 
   const ethPriceInUsd = prices[0];
   const balanceInUsd =
@@ -105,7 +118,10 @@ async function getTreasuryBalanceAtBlock(
         acc + Number(formatUnits(tokenBalances[j], 18)) * prices[j],
       0,
     ) +
-    Number(formatUnits(tokenBalances[ETH_LIKE_TOKENS.length], 6));
+    Number(formatUnits(tokenBalances[ETH_LIKE_TOKENS.length], 6)) +
+    Number(formatUnits(tokenBalances[ETH_LIKE_TOKENS.length + 1], 18)) *
+      methToEth *
+      ethPriceInUsd;
 
   return { timestamp, balanceInUsd, ethPriceInUsd };
 }
@@ -113,7 +129,7 @@ async function getTreasuryBalanceAtBlock(
 // Past blocks never change, so cache them forever
 const getTreasuryBalanceAtBlockCached = unstable_cache(
   async (blockNumber: string) => getTreasuryBalanceAtBlock(BigInt(blockNumber)),
-  ["treasury-balance-at-block-v1"],
+  ["treasury-balance-at-block-v3"],
   { revalidate: false },
 );
 
