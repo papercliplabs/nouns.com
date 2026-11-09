@@ -1,6 +1,5 @@
 "use server";
 import { Noun } from "./types";
-import { checkForAllNounRevalidation } from "./getAllNouns";
 import { CHAIN_CONFIG } from "@/config";
 import { IndexerNoun, transformQueryNounToNoun } from "./helpers";
 import { unstable_cache } from "next/cache";
@@ -59,14 +58,7 @@ export async function getNounByIdUncached(
 
   const queryNoun =
     owner && seed ? { id, owner, seed } : await getNounFromChain(id);
-  const noun = queryNoun ? transformQueryNounToNoun(queryNoun) : undefined;
-
-  // Kickoff a check to revalidate all in grid (when its a new Noun)
-  if (noun) {
-    checkForAllNounRevalidation(id);
-  }
-
-  return noun;
+  return queryNoun ? transformQueryNounToNoun(queryNoun) : undefined;
 }
 
 const getNounByIdCached = unstable_cache(
@@ -76,10 +68,5 @@ const getNounByIdCached = unstable_cache(
 );
 
 export async function getNounById(id: string): Promise<Noun | undefined> {
-  const noun = await getNounByIdCached(id);
-
-  // Kickoff a check to revalidate all in grid (when its a new Noun)
-  checkForAllNounRevalidation(id);
-
-  return noun;
+  return getNounByIdCached(id);
 }

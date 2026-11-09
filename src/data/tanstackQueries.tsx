@@ -24,10 +24,3 @@ export function nounQuery(id?: BigIntString) {
   };
 }
 
-export function nogsQuery(nounId: string) {
-  return {
-    queryKey: ["nogs", nounId],
-    queryFn: async () => await safeFetch<number>(`/api/noun/${nounId}/nogs`),
-  };
-}
-
