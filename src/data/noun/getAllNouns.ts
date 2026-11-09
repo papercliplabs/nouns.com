@@ -1,7 +1,7 @@
 "use server";
 import { CHAIN_CONFIG } from "@/config";
 import { Noun } from "./types";
-import { revalidateTag, unstable_cache } from "next/cache";
+import { unstable_cache } from "next/cache";
 import { IndexerNoun, transformQueryNounToNoun } from "./helpers";
 import { indexerQueryAll } from "../indexer/client";
 
@@ -69,15 +69,4 @@ export async function getAllNouns(): Promise<Noun[]> {
   nouns.sort((a, b) => (BigInt(b.id) > BigInt(a.id) ? 1 : -1));
 
   return nouns;
-}
-
-export async function forceAllNounRevalidation() {
-  revalidateTag(`paginated-nouns-query-${CHAIN_CONFIG.chain.id.toString()}`);
-}
-
-export async function checkForAllNounRevalidation(nounId: string) {
-  const allNouns = await getAllNouns();
-  if (allNouns[0]?.id && BigInt(allNouns[0].id) < BigInt(nounId)) {
-    forceAllNounRevalidation();
-  }
 }

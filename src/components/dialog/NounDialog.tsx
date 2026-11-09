@@ -9,11 +9,8 @@ import { CHAIN_CONFIG } from "@/config";
 import { Skeleton } from "../ui/skeleton";
 import { useNounImage } from "@/hooks/useNounImage";
 import { scrollToNounExplorer } from "@/utils/scroll";
-import { formatNumber } from "@/utils/format";
 import { Avatar, Name } from "@paperclip-labs/whisk-sdk/identity";
 import { LinkExternal } from "../ui/link";
-import { useQuery } from "@tanstack/react-query";
-import { nogsQuery } from "@/data/tanstackQueries";
 import {
   DrawerDialog,
   DrawerDialogContent,
@@ -39,11 +36,6 @@ export default function NounDialog({
       setNoun(nouns.find((noun) => noun.id === nounId));
     }
   }, [nouns, nounId]);
-
-  const { data: nogsValue } = useQuery({
-    ...nogsQuery(nounId!),
-    enabled: !!nounId,
-  });
 
   const fullImageData = useNounImage("full", noun);
 
@@ -110,24 +102,6 @@ export default function NounDialog({
                 <NounTraitCard type="accessory" noun={noun} />
                 <NounTraitCard type="background" noun={noun} />
               </div>
-            </div>
-
-            <Separator className="h-[2px]" />
-
-            <div className="flex flex-col gap-4">
-              <h5>Info</h5>
-              <LinkExternal
-                href={`https://app.noggles.com/reward/eth/0x9C8fF314C9Bc7F6e59A9d9225Fb22946427eDC03/${nounId}`}
-                className="flex w-fit items-center gap-2.5 rounded-lg bg-black/5 p-2 label-sm hover:bg-black/10 hover:brightness-100"
-              >
-                <Image src="/nogs.png" width={24} height={24} alt="" />
-                <span>
-                  $NOGS:{" "}
-                  {nogsValue != null
-                    ? formatNumber({ input: nogsValue })
-                    : "-"}
-                </span>
-              </LinkExternal>
             </div>
 
             <Separator className="h-[2px]" />
